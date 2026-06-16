@@ -1,0 +1,18 @@
+{
+  "@@locale": "en",
+  "appTitle": "Dartboard Angle",
+  "home": "Home",
+  "settings": "Settings",
+  "appearance": "Appearance",
+  "themeSystem": "Automatic (System)",
+  "themeSystemSub": "Follows your smartphone settings",
+  "themeLight": "Light Design",
+  "themeDark": "Dark Design",
+  "language": "Language",
+  "langSystem": "System Language",
+  "about": "About the App",
+  "noCamera": "No camera found on this device.",
+  "tiltAngle": "Tilt Angle",
+  "perfectAlignment": "Perfectly Aligned",
+  "deviation": "Deviation"
+}
