@@ -39,7 +39,7 @@ class CameraControllerNotifier extends AsyncNotifier<CameraController> {
 
     try {
       // Initialize the camera controller using the first camera and maximum resolution preset.
-      final controller = CameraController(cameras[0], ResolutionPreset.max);
+      final controller = CameraController(cameras[0], ResolutionPreset.max, enableAudio: false);
       await controller.initialize();
       
       // Ensure the controller is disposed of when the provider is disposed to release hardware resources.

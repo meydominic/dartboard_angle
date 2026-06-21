@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:dartboard_angle/providers/app_settings_providers.dart';
 import 'package:dartboard_angle/screens/main_navigation_screen.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 
 /// The entry point of the application.
 /// Initializes the widget binding and runs the application wrapped in a [ProviderScope]
@@ -10,10 +11,15 @@ import 'package:dartboard_angle/screens/main_navigation_screen.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  runApp(
-    // ProviderScope is required for Riverpod to store and manage state.
-    const ProviderScope(
-      child: MyApp(),
+  final packageInfo = await PackageInfo.fromPlatform();
+
+runApp(
+    ProviderScope(
+      overrides: [
+
+        packageInfoProvider.overrideWithValue(packageInfo),
+      ],
+      child: const MyApp(),
     ),
   );
 }
@@ -26,12 +32,12 @@ class MyApp extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    // Watch the theme and locale providers to rebuild the MaterialApp when state changes.
-    final currentThemeMode = ref.watch(themeProvider);
-    final currentLocale = ref.watch(localeProvider);
+    final currentThemeMode = ref.watch(appThemeProvider);
+    final currentLocale = ref.watch(appLocaleProvider);
+    final appInfo = ref.watch(packageInfoProvider);
 
     return MaterialApp(
-      title: 'Dartboard Angle',
+      title: appInfo.appName,
       debugShowCheckedModeBanner: false,
 
       // Register generated localization delegates and supported locales.

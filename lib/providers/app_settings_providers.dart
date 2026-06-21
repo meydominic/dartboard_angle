@@ -1,8 +1,24 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:package_info_plus/package_info_plus.dart';
+import 'package:riverpod_annotation/riverpod_annotation.dart';
+
+part 'app_settings_providers.g.dart';
+
+// ==========================================
+// PACKAGE INFO
+// ==========================================
+@Riverpod(keepAlive: true)
+PackageInfo packageInfo(Ref ref) {
+  throw UnimplementedError('packageInfoProvider wurde nicht im ProviderScope überschrieben.');
+}
+
+// ==========================================
+// THEME
+// ==========================================
 
 /// A notifier that manages the application's theme mode (system, light, or dark).
-class ThemeNotifier extends Notifier<ThemeMode> {
+@Riverpod(keepAlive: true)
+class AppTheme extends _$AppTheme {
   @override
   ThemeMode build() => ThemeMode.system; // Default to matching the system's theme settings.
 
@@ -12,12 +28,14 @@ class ThemeNotifier extends Notifier<ThemeMode> {
   }
 }
 
-/// Provider for the theme mode state.
-final themeProvider = NotifierProvider<ThemeNotifier, ThemeMode>(ThemeNotifier.new);
+// ==========================================
+// LOCALE
+// ==========================================
 
 /// A notifier that manages the application's locale settings.
 /// A value of `null` indicates that the device's default system language should be used.
-class LocaleNotifier extends Notifier<Locale?> {
+@Riverpod(keepAlive: true)
+class AppLocale extends _$AppLocale {
   @override
   Locale? build() => null;
 
@@ -26,6 +44,3 @@ class LocaleNotifier extends Notifier<Locale?> {
     state = locale;
   }
 }
-
-/// Provider for the locale state.
-final localeProvider = NotifierProvider<LocaleNotifier, Locale?>(LocaleNotifier.new);

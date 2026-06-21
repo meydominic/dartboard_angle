@@ -28,10 +28,8 @@ class HomeScreen extends ConsumerWidget {
           loading: () => const LoadingScreen(title: 'Waiting for sensor data...'),
           error: (err, _) => ErrorScreen(message: 'Sensor Error: $err'),
           data: (rotationAngle) {
-            // Convert angle from radians to degrees for the level visualizer.
-            final angleDegrees = rotationAngle * 180 / math.pi;
-            // The device is considered level/aligned if the deviation is less than 1.0 degree.
-            final isLevel = angleDegrees.abs() < 1.0;
+
+            final safeAngle = rotationAngle.isFinite ? rotationAngle : 0.0;
 
             return Scaffold(
               backgroundColor: Colors.black,
@@ -65,67 +63,19 @@ class HomeScreen extends ConsumerWidget {
                   // Dartboard SVG overlay that rotates dynamically in alignment with the physical world.
                   Transform.scale(
                     scale: scaleValue,
-                    child: Transform.rotate(
-                      angle: rotationAngle,
+                    child: AnimatedRotation(
+                      turns: safeAngle / (2 * math.pi),
+                      duration: const Duration(milliseconds: 200),
+                      curve: Curves.easeOutCubic,
                       child: SvgPicture.asset(
                         'assets/dartboard.svg',
-                        width: 320,
-                        height: 320,
-                      ),
-                    ),
-                  ),
-
-                  // Top HUD: Spirit Level & Angle Details.
-                  Positioned(
-                    top: 50,
-                    left: 20,
-                    right: 20,
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        // Glassmorphic status card.
-                        Container(
-                          padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 20),
-                          decoration: BoxDecoration(
-                            color: Colors.black.withValues(alpha: 0.65),
-                            borderRadius: BorderRadius.circular(16),
-                            border: Border.all(
-                              color: isLevel ? Colors.greenAccent.withValues(alpha: 0.5) : Colors.white.withValues(alpha: 0.15),
-                              width: 1.5,
-                            ),
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.black.withValues(alpha: 0.3),
-                                blurRadius: 10,
-                                spreadRadius: 2,
-                              ),
-                            ],
-                          ),
-                          child: Column(
-                            children: [
-                              Text(
-                                isLevel ? l10n.perfectAlignment : l10n.deviation,
-                                style: Theme.of(context).textTheme.labelLarge?.copyWith(
-                                  color: isLevel ? Colors.greenAccent : Colors.amberAccent,
-                                  fontWeight: FontWeight.bold,
-                                  letterSpacing: 1.0,
-                                ),
-                              ),
-                              const SizedBox(height: 4),
-                              Text(
-                                '${angleDegrees.toStringAsFixed(1)}°',
-                                style: Theme.of(context).textTheme.displaySmall?.copyWith(
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.w900,
-                                ),
-                              ),
-                            ],
-                          ),
+                        width: 300,
+                        height: 300,
+                        colorFilter: ColorFilter.mode(
+                          Colors.white.withValues(alpha: 0.8),
+                          BlendMode.srcIn,
                         ),
-                        const SizedBox(height: 16),
-                        // Visual bubble level (spirit level).
-                        BubbleLevel(angleDegrees: angleDegrees),
-                      ],
+                      ),
                     ),
                   ),
 
@@ -177,8 +127,11 @@ class HomeScreen extends ConsumerWidget {
       color: Colors.transparent,
       child: InkWell(
         onTap: () {
+          final displaySize = MediaQuery.sizeOf(context);
+          final minScreenDimension = math.min(displaySize.width, displaySize.height);
+          final maxScale = minScreenDimension / 300;
           final currentZoom = ref.read(dartboardScaleProvider);
-          final newZoom = (currentZoom + delta).clamp(0.5, 3.0);
+          final newZoom = (currentZoom + delta).clamp(0.5, maxScale);
           ref.read(dartboardScaleProvider.notifier).setScale(newZoom);
         },
         customBorder: const CircleBorder(),

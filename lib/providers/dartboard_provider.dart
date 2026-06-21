@@ -2,21 +2,14 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:sensors_plus/sensors_plus.dart';
 import 'dart:math' as math;
 
-/// Provides a stream of accelerometer events, throttled to approximately 30 FPS (33ms).
+/// Provides a stream of accelerometer events, throttled to 200ms.
 /// Automatically disposes of itself when no longer listened to.
 final throttledSensorProvider = StreamProvider.autoDispose<AccelerometerEvent>((ref) async* {
-  DateTime lastUpdate = DateTime.fromMillisecondsSinceEpoch(0);
 
-  // Listen to the raw accelerometer events stream with a requested 33ms sampling interval.
   await for (final event in accelerometerEventStream(
-    samplingPeriod: const Duration(milliseconds: 33),
+    samplingPeriod: SensorInterval.normalInterval,
   )) {
-    final now = DateTime.now();
-    // Throttling check: Only yield if at least 33ms have passed since the last update.
-    if (now.difference(lastUpdate).inMilliseconds >= 33) {
-      lastUpdate = now;
-      yield event;
-    }
+    yield event;
   }
 });
 

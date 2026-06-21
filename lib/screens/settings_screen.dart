@@ -14,9 +14,9 @@ class SettingsScreen extends ConsumerWidget {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
     
-    // Watch the settings provider states to rebuild when settings are changed.
-    final currentTheme = ref.watch(themeProvider);
-    final currentLocale = ref.watch(localeProvider);
+    final currentTheme = ref.watch(appThemeProvider);
+    final currentLocale = ref.watch(appLocaleProvider);
+    final appInfo = ref.watch(packageInfoProvider);
 
     return Scaffold(
       appBar: AppBar(
@@ -45,7 +45,7 @@ class SettingsScreen extends ConsumerWidget {
             child: RadioGroup<ThemeMode>(
               groupValue: currentTheme,
               onChanged: (mode) {
-                if (mode != null) ref.read(themeProvider.notifier).setTheme(mode);
+                if (mode != null) ref.read(appThemeProvider.notifier).setTheme(mode);
               },
               child: Column(
                 children: [
@@ -85,7 +85,7 @@ class SettingsScreen extends ConsumerWidget {
             clipBehavior: Clip.antiAlias,
             child: RadioGroup<Locale?>(
               groupValue: currentLocale,
-              onChanged: (locale) => ref.read(localeProvider.notifier).setLocale(locale),
+              onChanged: (locale) => ref.read(appLocaleProvider.notifier).setLocale(locale),
               child: Column(
                 children: [
                   RadioListTile<Locale?>(
@@ -123,23 +123,8 @@ class SettingsScreen extends ConsumerWidget {
             clipBehavior: Clip.antiAlias,
             child: ListTile(
               leading: Icon(Icons.phone_android_outlined, color: colorScheme.primary),
-              title: Text('Dartboard Angle', style: theme.textTheme.bodyLarge?.copyWith(fontWeight: FontWeight.bold)),
-              subtitle: Text('Version 1.0.0', style: theme.textTheme.bodyMedium?.copyWith(color: colorScheme.onSurfaceVariant)),
-              trailing: Icon(Icons.open_in_new_outlined, color: colorScheme.onSurfaceVariant),
-              onTap: () {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                    behavior: SnackBarBehavior.floating,
-                    backgroundColor: colorScheme.inverseSurface,
-                    content: Text('meydom.dev', style: TextStyle(color: colorScheme.onInverseSurface)),
-                    action: SnackBarAction(
-                      label: 'OK',
-                      textColor: colorScheme.inversePrimary,
-                      onPressed: () {},
-                    ),
-                  ),
-                );
-              },
+              title: Text(appInfo.appName, style: theme.textTheme.bodyLarge?.copyWith(fontWeight: FontWeight.bold)),
+              subtitle: Text('Version ${appInfo.version}', style: theme.textTheme.bodyMedium?.copyWith(color: colorScheme.onSurfaceVariant)),
             ),
           ),
         ],
