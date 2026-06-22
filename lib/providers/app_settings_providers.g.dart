@@ -8,20 +8,60 @@ part of 'app_settings_providers.dart';
 
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // ignore_for_file: type=lint, type=warning
-/// Synchroner Zugriff auf die beim Start geladenen App-Informationen.
-/// Wird in der main.dart beim App-Start überschrieben.
+
+@ProviderFor(sharedPreferences)
+final sharedPreferencesProvider = SharedPreferencesProvider._();
+
+final class SharedPreferencesProvider
+    extends
+        $FunctionalProvider<
+          SharedPreferences,
+          SharedPreferences,
+          SharedPreferences
+        >
+    with $Provider<SharedPreferences> {
+  SharedPreferencesProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'sharedPreferencesProvider',
+        isAutoDispose: false,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$sharedPreferencesHash();
+
+  @$internal
+  @override
+  $ProviderElement<SharedPreferences> $createElement(
+    $ProviderPointer pointer,
+  ) => $ProviderElement(pointer);
+
+  @override
+  SharedPreferences create(Ref ref) {
+    return sharedPreferences(ref);
+  }
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(SharedPreferences value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<SharedPreferences>(value),
+    );
+  }
+}
+
+String _$sharedPreferencesHash() => r'43bedba89d040ef320b9c3554e46d0ad69b68545';
 
 @ProviderFor(packageInfo)
 final packageInfoProvider = PackageInfoProvider._();
 
-/// Synchroner Zugriff auf die beim Start geladenen App-Informationen.
-/// Wird in der main.dart beim App-Start überschrieben.
-
 final class PackageInfoProvider
     extends $FunctionalProvider<PackageInfo, PackageInfo, PackageInfo>
     with $Provider<PackageInfo> {
-  /// Synchroner Zugriff auf die beim Start geladenen App-Informationen.
-  /// Wird in der main.dart beim App-Start überschrieben.
   PackageInfoProvider._()
     : super(
         from: null,
@@ -58,16 +98,13 @@ final class PackageInfoProvider
 String _$packageInfoHash() => r'77892c4c7025ecad594cfb80e7efaa0045e596b2';
 
 /// A notifier that manages the application's theme mode (system, light, or dark).
-/// Generiert automatisch den `themeProvider`.
 
 @ProviderFor(AppTheme)
 final appThemeProvider = AppThemeProvider._();
 
 /// A notifier that manages the application's theme mode (system, light, or dark).
-/// Generiert automatisch den `themeProvider`.
 final class AppThemeProvider extends $NotifierProvider<AppTheme, ThemeMode> {
   /// A notifier that manages the application's theme mode (system, light, or dark).
-  /// Generiert automatisch den `themeProvider`.
   AppThemeProvider._()
     : super(
         from: null,
@@ -98,7 +135,6 @@ final class AppThemeProvider extends $NotifierProvider<AppTheme, ThemeMode> {
 String _$appThemeHash() => r'f2d3d3ae477801101f98ba62b93ca9d8b1f71c2e';
 
 /// A notifier that manages the application's theme mode (system, light, or dark).
-/// Generiert automatisch den `themeProvider`.
 
 abstract class _$AppTheme extends $Notifier<ThemeMode> {
   ThemeMode build();
@@ -120,24 +156,15 @@ abstract class _$AppTheme extends $Notifier<ThemeMode> {
 
 /// A notifier that manages the application's locale settings.
 /// A value of `null` indicates that the device's default system language should be used.
-///
-/// HINWEIS: Klassenname ist 'AppLocale', um Konflikte mit Flutters 'Locale'-Klasse zu vermeiden.
-/// Generiert automatisch den `appLocaleProvider`.
 
 @ProviderFor(AppLocale)
 final appLocaleProvider = AppLocaleProvider._();
 
 /// A notifier that manages the application's locale settings.
 /// A value of `null` indicates that the device's default system language should be used.
-///
-/// HINWEIS: Klassenname ist 'AppLocale', um Konflikte mit Flutters 'Locale'-Klasse zu vermeiden.
-/// Generiert automatisch den `appLocaleProvider`.
 final class AppLocaleProvider extends $NotifierProvider<AppLocale, Locale?> {
   /// A notifier that manages the application's locale settings.
   /// A value of `null` indicates that the device's default system language should be used.
-  ///
-  /// HINWEIS: Klassenname ist 'AppLocale', um Konflikte mit Flutters 'Locale'-Klasse zu vermeiden.
-  /// Generiert automatisch den `appLocaleProvider`.
   AppLocaleProvider._()
     : super(
         from: null,
@@ -169,9 +196,6 @@ String _$appLocaleHash() => r'bb136c03ecaa570acb2ff4ba1e73f3a2af7526fb';
 
 /// A notifier that manages the application's locale settings.
 /// A value of `null` indicates that the device's default system language should be used.
-///
-/// HINWEIS: Klassenname ist 'AppLocale', um Konflikte mit Flutters 'Locale'-Klasse zu vermeiden.
-/// Generiert automatisch den `appLocaleProvider`.
 
 abstract class _$AppLocale extends $Notifier<Locale?> {
   Locale? build();

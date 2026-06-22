@@ -1,3 +1,5 @@
+import 'package:dartboard_angle/constants/shared_pref_keys.dart';
+import 'package:dartboard_angle/providers/app_settings_providers.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:sensors_plus/sensors_plus.dart';
 import 'dart:math' as math;
@@ -34,12 +36,14 @@ final dartboardRotationProvider = Provider.autoDispose<AsyncValue<double>>((ref)
 class DartboardScaleNotifier extends Notifier<double> {
   @override
   double build() {
-    // Initial zoom level is set to 1.0.
-    return 1.0;
+    final prefs = ref.watch(sharedPreferencesProvider);
+    return prefs.getDouble(SharedPrefKeys.dartboardScale) ?? 1.0; // Default scale is 1.0 (no zoom)
   }
 
   /// Updates the zoom scale factor dynamically.
   void setScale(double newScale) {
+    final prefs = ref.watch(sharedPreferencesProvider);
+    prefs.setDouble(SharedPrefKeys.dartboardScale, newScale);
     state = newScale;
   }
 }

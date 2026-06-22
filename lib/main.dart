@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:dartboard_angle/providers/app_settings_providers.dart';
 import 'package:dartboard_angle/screens/main_navigation_screen.dart';
 import 'package:package_info_plus/package_info_plus.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 /// The entry point of the application.
 /// Initializes the widget binding and runs the application wrapped in a [ProviderScope]
@@ -12,11 +13,12 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   final packageInfo = await PackageInfo.fromPlatform();
+  final prefs = await SharedPreferences.getInstance();
 
 runApp(
     ProviderScope(
       overrides: [
-
+        sharedPreferencesProvider.overrideWithValue(prefs),
         packageInfoProvider.overrideWithValue(packageInfo),
       ],
       child: const MyApp(),
