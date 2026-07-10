@@ -22,6 +22,7 @@ class HomeScreen extends ConsumerWidget {
     final sensorAsync = ref.watch(dartboardRotationProvider);
     final scaleValue = ref.watch(dartboardScaleProvider);
     final dartboardColor = ref.watch(dartboardColorProvider);
+    final useThickLines = ref.watch(dartboardThickLinesProvider);
 
     final displaySize = MediaQuery.sizeOf(context);
     final maxDiameterFromWidth = displaySize.width;
@@ -84,7 +85,7 @@ class HomeScreen extends ConsumerWidget {
                       duration: const Duration(milliseconds: 200),
                       curve: Curves.easeOutCubic,
                       child: SvgPicture.asset(
-                        'assets/dartboard.svg',
+                        useThickLines ? 'assets/dartboard_thick.svg' : 'assets/dartboard.svg',
                         width: 300,
                         height: 300,
                         colorFilter: ColorFilter.mode(

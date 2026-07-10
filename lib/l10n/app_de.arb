@@ -44,5 +44,7 @@
   },
   "dartboardColor": "Dartscheiben-Farbe",
   "dartboardColorSub": "Farbe der projizierten Silhouette",
-  "pickColor": "Farbe wählen"
+  "pickColor": "Farbe wählen",
+  "dartboardThickLines": "Dickere Linien anzeigen",
+  "dartboardThickLinesSub": "Erhöht die Liniendicke der Silhouette für bessere Sichtbarkeit"
 }

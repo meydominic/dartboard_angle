@@ -241,6 +241,18 @@ abstract class AppLocalizations {
   /// In de, this message translates to:
   /// **'Farbe wählen'**
   String get pickColor;
+
+  /// No description provided for @dartboardThickLines.
+  ///
+  /// In de, this message translates to:
+  /// **'Dickere Linien anzeigen'**
+  String get dartboardThickLines;
+
+  /// No description provided for @dartboardThickLinesSub.
+  ///
+  /// In de, this message translates to:
+  /// **'Erhöht die Liniendicke der Silhouette für bessere Sichtbarkeit'**
+  String get dartboardThickLinesSub;
 }
 
 class _AppLocalizationsDelegate

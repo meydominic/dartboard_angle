@@ -44,5 +44,7 @@
   },
   "dartboardColor": "Dartboard Color",
   "dartboardColorSub": "Color of the projected silhouette",
-  "pickColor": "Pick Color"
+  "pickColor": "Pick Color",
+  "dartboardThickLines": "Show thicker lines",
+  "dartboardThickLinesSub": "Increases the silhouette line thickness for better visibility"
 }

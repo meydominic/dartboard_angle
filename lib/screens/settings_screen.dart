@@ -80,48 +80,59 @@ class SettingsScreen extends ConsumerWidget {
             ),
             color: colorScheme.surfaceContainerLow,
             clipBehavior: Clip.antiAlias,
-            child: ListTile(
-              title: Text(l10n.dartboardColor, style: theme.textTheme.bodyLarge),
-              subtitle: Text(l10n.dartboardColorSub, style: theme.textTheme.bodyMedium?.copyWith(color: colorScheme.onSurfaceVariant)),
-              trailing: Container(
-                width: 32,
-                height: 32,
-                decoration: BoxDecoration(
-                  color: ref.watch(dartboardColorProvider),
-                  shape: BoxShape.circle,
-                  border: Border.all(color: colorScheme.outline, width: 1),
-                ),
-              ),
-              onTap: () async {
-                final currentColor = ref.read(dartboardColorProvider);
-                Color pickedColor = currentColor;
-                
-                await showDialog<void>(
-                  context: context,
-                  builder: (context) {
-                    return AlertDialog(
-                      title: Text(l10n.pickColor),
-                      content: SingleChildScrollView(
-                        child: ColorPicker(
-                          pickerColor: currentColor,
-                          onColorChanged: (color) => pickedColor = color,
-                          enableAlpha: true,
-                          displayThumbColor: true,
-                          pickerAreaHeightPercent: 0.8,
-                        ),
-                      ),
-                      actions: [
-                        TextButton(
-                          onPressed: () => Navigator.of(context).pop(),
-                          child: const Text('OK'),
-                        ),
-                      ],
+            child: Column(
+              children: [
+                ListTile(
+                  title: Text(l10n.dartboardColor, style: theme.textTheme.bodyLarge),
+                  subtitle: Text(l10n.dartboardColorSub, style: theme.textTheme.bodyMedium?.copyWith(color: colorScheme.onSurfaceVariant)),
+                  trailing: Container(
+                    width: 32,
+                    height: 32,
+                    decoration: BoxDecoration(
+                      color: ref.watch(dartboardColorProvider),
+                      shape: BoxShape.circle,
+                      border: Border.all(color: colorScheme.outline, width: 1),
+                    ),
+                  ),
+                  onTap: () async {
+                    final currentColor = ref.read(dartboardColorProvider);
+                    Color pickedColor = currentColor;
+                    
+                    await showDialog<void>(
+                      context: context,
+                      builder: (context) {
+                        return AlertDialog(
+                          title: Text(l10n.pickColor),
+                          content: SingleChildScrollView(
+                            child: ColorPicker(
+                              pickerColor: currentColor,
+                              onColorChanged: (color) => pickedColor = color,
+                              enableAlpha: true,
+                              displayThumbColor: true,
+                              pickerAreaHeightPercent: 0.8,
+                            ),
+                          ),
+                          actions: [
+                            TextButton(
+                              onPressed: () => Navigator.of(context).pop(),
+                              child: const Text('OK'),
+                            ),
+                          ],
+                        );
+                      },
                     );
+                    
+                    ref.read(dartboardColorProvider.notifier).setColor(pickedColor);
                   },
-                );
-                
-                ref.read(dartboardColorProvider.notifier).setColor(pickedColor);
-              },
+                ),
+                Divider(height: 1, color: colorScheme.outlineVariant),
+                SwitchListTile(
+                  title: Text(l10n.dartboardThickLines, style: theme.textTheme.bodyLarge),
+                  subtitle: Text(l10n.dartboardThickLinesSub, style: theme.textTheme.bodyMedium?.copyWith(color: colorScheme.onSurfaceVariant)),
+                  value: ref.watch(dartboardThickLinesProvider),
+                  onChanged: (isThick) => ref.read(dartboardThickLinesProvider.notifier).setThickLines(isThick),
+                ),
+              ],
             ),
           ),
 

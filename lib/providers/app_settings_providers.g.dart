@@ -251,7 +251,7 @@ final class DartboardColorProvider
   }
 }
 
-String _$dartboardColorHash() => r'adfb8d0090312e056632848df286da595905a920';
+String _$dartboardColorHash() => r'0f89976bb70ea03e0c1beec13750d85b65fe01df';
 
 /// A notifier that manages the color of the dartboard silhouette.
 
@@ -266,6 +266,65 @@ abstract class _$DartboardColor extends $Notifier<Color> {
             as $ClassProviderElement<
               AnyNotifier<Color, Color>,
               Color,
+              Object?,
+              Object?
+            >;
+    return element.handleCreate(ref, build);
+  }
+}
+
+/// A notifier that manages whether to display thicker dartboard lines.
+
+@ProviderFor(DartboardThickLines)
+final dartboardThickLinesProvider = DartboardThickLinesProvider._();
+
+/// A notifier that manages whether to display thicker dartboard lines.
+final class DartboardThickLinesProvider
+    extends $NotifierProvider<DartboardThickLines, bool> {
+  /// A notifier that manages whether to display thicker dartboard lines.
+  DartboardThickLinesProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'dartboardThickLinesProvider',
+        isAutoDispose: false,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$dartboardThickLinesHash();
+
+  @$internal
+  @override
+  DartboardThickLines create() => DartboardThickLines();
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(bool value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<bool>(value),
+    );
+  }
+}
+
+String _$dartboardThickLinesHash() =>
+    r'cc2329723e73fca57933ddb5b7c4d31155f946ed';
+
+/// A notifier that manages whether to display thicker dartboard lines.
+
+abstract class _$DartboardThickLines extends $Notifier<bool> {
+  bool build();
+  @$mustCallSuper
+  @override
+  WhenComplete runBuild() {
+    final ref = this.ref as $Ref<bool, bool>;
+    final element =
+        ref.element
+            as $ClassProviderElement<
+              AnyNotifier<bool, bool>,
+              bool,
               Object?,
               Object?
             >;

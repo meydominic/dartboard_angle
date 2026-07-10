@@ -68,4 +68,4 @@ flutter:
   generate: true
 
   assets:
-    - assets/dartboard.svg
+    - assets/

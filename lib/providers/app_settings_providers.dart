@@ -94,3 +94,24 @@ class DartboardColor extends _$DartboardColor {
     state = color;
   }
 }
+
+// ==========================================
+// DARTBOARD THICKNESS
+// ==========================================
+
+/// A notifier that manages whether to display thicker dartboard lines.
+@Riverpod(keepAlive: true)
+class DartboardThickLines extends _$DartboardThickLines {
+  @override
+  bool build() {
+    final prefs = ref.watch(sharedPreferencesProvider);
+    return prefs.getBool(SharedPrefKeys.dartboardThickLines) ?? false;
+  }
+
+  /// Updates the line thickness preference.
+  void setThickLines(bool isThick) {
+    final prefs = ref.watch(sharedPreferencesProvider);
+    prefs.setBool(SharedPrefKeys.dartboardThickLines, isThick);
+    state = isThick;
+  }
+}

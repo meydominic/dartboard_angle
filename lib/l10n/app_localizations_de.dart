@@ -85,4 +85,11 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get pickColor => 'Farbe wählen';
+
+  @override
+  String get dartboardThickLines => 'Dickere Linien anzeigen';
+
+  @override
+  String get dartboardThickLinesSub =>
+      'Erhöht die Liniendicke der Silhouette für bessere Sichtbarkeit';
 }
