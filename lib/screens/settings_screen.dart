@@ -2,6 +2,7 @@ import 'package:dartboard_angle/l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:dartboard_angle/providers/app_settings_providers.dart';
+import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 
 /// A settings screen that allows users to configure the application's appearance
 /// (light, dark, or system theme), select the UI language, and view information about the app.
@@ -67,6 +68,60 @@ class SettingsScreen extends ConsumerWidget {
                   ),
                 ],
               ),
+            ),
+          ),
+
+          const SizedBox(height: 16),
+          Card(
+            elevation: 0,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(16.0),
+              side: BorderSide(color: colorScheme.outlineVariant, width: 1.0),
+            ),
+            color: colorScheme.surfaceContainerLow,
+            clipBehavior: Clip.antiAlias,
+            child: ListTile(
+              title: Text(l10n.dartboardColor, style: theme.textTheme.bodyLarge),
+              subtitle: Text(l10n.dartboardColorSub, style: theme.textTheme.bodyMedium?.copyWith(color: colorScheme.onSurfaceVariant)),
+              trailing: Container(
+                width: 32,
+                height: 32,
+                decoration: BoxDecoration(
+                  color: ref.watch(dartboardColorProvider),
+                  shape: BoxShape.circle,
+                  border: Border.all(color: colorScheme.outline, width: 1),
+                ),
+              ),
+              onTap: () async {
+                final currentColor = ref.read(dartboardColorProvider);
+                Color pickedColor = currentColor;
+                
+                await showDialog<void>(
+                  context: context,
+                  builder: (context) {
+                    return AlertDialog(
+                      title: Text(l10n.pickColor),
+                      content: SingleChildScrollView(
+                        child: ColorPicker(
+                          pickerColor: currentColor,
+                          onColorChanged: (color) => pickedColor = color,
+                          enableAlpha: true,
+                          displayThumbColor: true,
+                          pickerAreaHeightPercent: 0.8,
+                        ),
+                      ),
+                      actions: [
+                        TextButton(
+                          onPressed: () => Navigator.of(context).pop(),
+                          child: const Text('OK'),
+                        ),
+                      ],
+                    );
+                  },
+                );
+                
+                ref.read(dartboardColorProvider.notifier).setColor(pickedColor);
+              },
             ),
           ),
 

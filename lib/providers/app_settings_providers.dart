@@ -71,3 +71,26 @@ class AppLocale extends _$AppLocale {
     state = locale;
   }
 }
+
+// ==========================================
+// DARTBOARD COLOR
+// ==========================================
+
+/// A notifier that manages the color of the dartboard silhouette.
+@Riverpod(keepAlive: true)
+class DartboardColor extends _$DartboardColor {
+  @override
+  Color build() {
+    final prefs = ref.watch(sharedPreferencesProvider);
+    final colorValue = prefs.getInt(SharedPrefKeys.dartboardColor);
+    // Default to pure white if no preference is set.
+    return colorValue != null ? Color(colorValue) : const Color(0xFFFFFFFF);
+  }
+
+  /// Updates the dartboard color preference.
+  void setColor(Color color) {
+    final prefs = ref.watch(sharedPreferencesProvider);
+    prefs.setInt(SharedPrefKeys.dartboardColor, color.toARGB32());
+    state = color;
+  }
+}

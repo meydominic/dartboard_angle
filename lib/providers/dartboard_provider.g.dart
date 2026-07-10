@@ -148,7 +148,7 @@ final class DartboardScaleProvider
   }
 }
 
-String _$dartboardScaleHash() => r'35987e0f6e9a019eae286f57f08c5da30460b9aa';
+String _$dartboardScaleHash() => r'cbc386b560749af994f3baad13426e880090d624';
 
 /// Manages the zoom scale factor for the dartboard graphic.
 

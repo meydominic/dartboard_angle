@@ -41,6 +41,7 @@ dependencies:
   riverpod_annotation: ^4.0.3
   riverpod_generator: ^4.0.4
   shared_preferences: ^2.5.5
+  flutter_colorpicker: ^1.1.0
 
 dev_dependencies:
   flutter_test:

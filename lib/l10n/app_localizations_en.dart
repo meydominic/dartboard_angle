@@ -76,4 +76,13 @@ class AppLocalizationsEn extends AppLocalizations {
   String sensorError(String error) {
     return 'Sensor Error: $error';
   }
+
+  @override
+  String get dartboardColor => 'Dartboard Color';
+
+  @override
+  String get dartboardColorSub => 'Color of the projected silhouette';
+
+  @override
+  String get pickColor => 'Pick Color';
 }

@@ -214,3 +214,61 @@ abstract class _$AppLocale extends $Notifier<Locale?> {
     return element.handleCreate(ref, build);
   }
 }
+
+/// A notifier that manages the color of the dartboard silhouette.
+
+@ProviderFor(DartboardColor)
+final dartboardColorProvider = DartboardColorProvider._();
+
+/// A notifier that manages the color of the dartboard silhouette.
+final class DartboardColorProvider
+    extends $NotifierProvider<DartboardColor, Color> {
+  /// A notifier that manages the color of the dartboard silhouette.
+  DartboardColorProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'dartboardColorProvider',
+        isAutoDispose: false,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$dartboardColorHash();
+
+  @$internal
+  @override
+  DartboardColor create() => DartboardColor();
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(Color value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<Color>(value),
+    );
+  }
+}
+
+String _$dartboardColorHash() => r'adfb8d0090312e056632848df286da595905a920';
+
+/// A notifier that manages the color of the dartboard silhouette.
+
+abstract class _$DartboardColor extends $Notifier<Color> {
+  Color build();
+  @$mustCallSuper
+  @override
+  WhenComplete runBuild() {
+    final ref = this.ref as $Ref<Color, Color>;
+    final element =
+        ref.element
+            as $ClassProviderElement<
+              AnyNotifier<Color, Color>,
+              Color,
+              Object?,
+              Object?
+            >;
+    return element.handleCreate(ref, build);
+  }
+}

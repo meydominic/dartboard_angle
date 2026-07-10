@@ -223,6 +223,24 @@ abstract class AppLocalizations {
   /// In de, this message translates to:
   /// **'Sensor-Fehler: {error}'**
   String sensorError(String error);
+
+  /// No description provided for @dartboardColor.
+  ///
+  /// In de, this message translates to:
+  /// **'Dartscheiben-Farbe'**
+  String get dartboardColor;
+
+  /// No description provided for @dartboardColorSub.
+  ///
+  /// In de, this message translates to:
+  /// **'Farbe der projizierten Silhouette'**
+  String get dartboardColorSub;
+
+  /// No description provided for @pickColor.
+  ///
+  /// In de, this message translates to:
+  /// **'Farbe wählen'**
+  String get pickColor;
 }
 
 class _AppLocalizationsDelegate

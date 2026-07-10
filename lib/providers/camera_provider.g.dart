@@ -92,7 +92,7 @@ final class AppCameraControllerProvider
 }
 
 String _$appCameraControllerHash() =>
-    r'0e4440713471627c8db58bf48d71f6fa6481a16e';
+    r'028f7b021ccc472d26cdf1ea10f62634d8f60868';
 
 /// A notifier that manages the lifecycle and state of a [CameraController].
 /// It listens to the app lifecycle state and recreates/refreshes the controller

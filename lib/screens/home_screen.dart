@@ -7,6 +7,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:dartboard_angle/l10n/app_localizations.dart';
 import 'package:dartboard_angle/providers/dartboard_provider.dart'; 
 import 'package:dartboard_angle/providers/camera_provider.dart';
+import 'package:dartboard_angle/providers/app_settings_providers.dart';
 import 'package:dartboard_angle/widgets/status_screens.dart';
 
 /// The main dashboard screen containing a live camera preview, a level visualizer HUD,
@@ -20,6 +21,7 @@ class HomeScreen extends ConsumerWidget {
     final cameraAsync = ref.watch(appCameraControllerProvider);
     final sensorAsync = ref.watch(dartboardRotationProvider);
     final scaleValue = ref.watch(dartboardScaleProvider);
+    final dartboardColor = ref.watch(dartboardColorProvider);
 
     final displaySize = MediaQuery.sizeOf(context);
     final maxDiameterFromWidth = displaySize.width;
@@ -86,7 +88,7 @@ class HomeScreen extends ConsumerWidget {
                         width: 300,
                         height: 300,
                         colorFilter: ColorFilter.mode(
-                          Colors.white.withValues(alpha: 0.8),
+                          dartboardColor,
                           BlendMode.srcIn,
                         ),
                       ),
