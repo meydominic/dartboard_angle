@@ -158,6 +158,18 @@ abstract class AppLocalizations {
   /// **'Systemsprache'**
   String get langSystem;
 
+  /// No description provided for @langGerman.
+  ///
+  /// In de, this message translates to:
+  /// **'Deutsch'**
+  String get langGerman;
+
+  /// No description provided for @langEnglish.
+  ///
+  /// In de, this message translates to:
+  /// **'English'**
+  String get langEnglish;
+
   /// No description provided for @about.
   ///
   /// In de, this message translates to:
@@ -187,6 +199,30 @@ abstract class AppLocalizations {
   /// In de, this message translates to:
   /// **'Abweichung'**
   String get deviation;
+
+  /// No description provided for @zoomScale.
+  ///
+  /// In de, this message translates to:
+  /// **'Zoom: {scale}x'**
+  String zoomScale(String scale);
+
+  /// No description provided for @waitingForSensorData.
+  ///
+  /// In de, this message translates to:
+  /// **'Warte auf Sensordaten...'**
+  String get waitingForSensorData;
+
+  /// No description provided for @cameraError.
+  ///
+  /// In de, this message translates to:
+  /// **'Kamera-Fehler: {error}'**
+  String cameraError(String error);
+
+  /// No description provided for @sensorError.
+  ///
+  /// In de, this message translates to:
+  /// **'Sensor-Fehler: {error}'**
+  String sensorError(String error);
 }
 
 class _AppLocalizationsDelegate

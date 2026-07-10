@@ -132,7 +132,7 @@ final class AppThemeProvider extends $NotifierProvider<AppTheme, ThemeMode> {
   }
 }
 
-String _$appThemeHash() => r'f2d3d3ae477801101f98ba62b93ca9d8b1f71c2e';
+String _$appThemeHash() => r'79c123092cb3ca1569adbc9c8be7a4267a5800bd';
 
 /// A notifier that manages the application's theme mode (system, light, or dark).
 
@@ -192,7 +192,7 @@ final class AppLocaleProvider extends $NotifierProvider<AppLocale, Locale?> {
   }
 }
 
-String _$appLocaleHash() => r'bb136c03ecaa570acb2ff4ba1e73f3a2af7526fb';
+String _$appLocaleHash() => r'17153da4ef9def08100b0903a01721270d70e4f5';
 
 /// A notifier that manages the application's locale settings.
 /// A value of `null` indicates that the device's default system language should be used.

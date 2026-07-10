@@ -39,6 +39,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String get langSystem => 'System Language';
 
   @override
+  String get langGerman => 'Deutsch';
+
+  @override
+  String get langEnglish => 'English';
+
+  @override
   String get about => 'About the App';
 
   @override
@@ -52,4 +58,22 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get deviation => 'Deviation';
+
+  @override
+  String zoomScale(String scale) {
+    return 'Zoom: ${scale}x';
+  }
+
+  @override
+  String get waitingForSensorData => 'Waiting for sensor data...';
+
+  @override
+  String cameraError(String error) {
+    return 'Camera Error: $error';
+  }
+
+  @override
+  String sensorError(String error) {
+    return 'Sensor Error: $error';
+  }
 }

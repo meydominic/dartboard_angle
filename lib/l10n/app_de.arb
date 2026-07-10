@@ -10,9 +10,36 @@
   "themeDark": "Dunkles Design",
   "language": "Sprache",
   "langSystem": "Systemsprache",
+  "langGerman": "Deutsch",
+  "langEnglish": "English",
   "about": "Über die App",
   "noCamera": "Keine Kamera auf dem Gerät gefunden.",
   "tiltAngle": "Neigungswinkel",
   "perfectAlignment": "Perfekt ausgerichtet",
-  "deviation": "Abweichung"
+  "deviation": "Abweichung",
+  "zoomScale": "Zoom: {scale}x",
+  "@zoomScale": {
+    "placeholders": {
+      "scale": {
+        "type": "String"
+      }
+    }
+  },
+  "waitingForSensorData": "Warte auf Sensordaten...",
+  "cameraError": "Kamera-Fehler: {error}",
+  "@cameraError": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "sensorError": "Sensor-Fehler: {error}",
+  "@sensorError": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  }
 }

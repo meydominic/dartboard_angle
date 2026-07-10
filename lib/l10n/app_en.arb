@@ -10,9 +10,36 @@
   "themeDark": "Dark Design",
   "language": "Language",
   "langSystem": "System Language",
+  "langGerman": "Deutsch",
+  "langEnglish": "English",
   "about": "About the App",
   "noCamera": "No camera found on this device.",
   "tiltAngle": "Tilt Angle",
   "perfectAlignment": "Perfectly Aligned",
-  "deviation": "Deviation"
+  "deviation": "Deviation",
+  "zoomScale": "Zoom: {scale}x",
+  "@zoomScale": {
+    "placeholders": {
+      "scale": {
+        "type": "String"
+      }
+    }
+  },
+  "waitingForSensorData": "Waiting for sensor data...",
+  "cameraError": "Camera Error: {error}",
+  "@cameraError": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "sensorError": "Sensor Error: {error}",
+  "@sensorError": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  }
 }

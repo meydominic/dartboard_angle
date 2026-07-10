@@ -1,39 +1,37 @@
 import 'package:dartboard_angle/constants/shared_pref_keys.dart';
 import 'package:dartboard_angle/providers/app_settings_providers.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:sensors_plus/sensors_plus.dart';
 import 'dart:math' as math;
 
+part 'dartboard_provider.g.dart';
+
 /// Provides a stream of accelerometer events, throttled to 200ms.
 /// Automatically disposes of itself when no longer listened to.
-final throttledSensorProvider = StreamProvider.autoDispose<AccelerometerEvent>((ref) async* {
-
+@riverpod
+Stream<AccelerometerEvent> throttledSensor(Ref ref) async* {
   await for (final event in accelerometerEventStream(
     samplingPeriod: SensorInterval.normalInterval,
   )) {
     yield event;
   }
-});
+}
 
 /// Calculates and exposes the rotational angle based on filtered accelerometer readings.
 /// Automatically disposes of itself when no longer listened to.
-final dartboardRotationProvider = Provider.autoDispose<AsyncValue<double>>((ref) {
-  // Watch the throttled stream for smooth, rate-limited data points.
+@riverpod
+AsyncValue<double> dartboardRotation(Ref ref) {
   final sensorAsync = ref.watch(throttledSensorProvider);
-
   return sensorAsync.when(
-    data: (event) {
-      // Invert the angle so the overlay rotates in alignment with the camera feed
-      // to keep it level relative to the physical world.
-      return AsyncData(math.pi / 2 - math.atan2(event.y, event.x));
-    },
+    data: (event) => AsyncData(math.pi / 2 - math.atan2(event.y, event.x)),
     error: (e, s) => AsyncError('Sensor data stream error: $e', s),
     loading: () => const AsyncLoading(),
   );
-});
+}
 
 /// Manages the zoom scale factor for the dartboard graphic.
-class DartboardScaleNotifier extends Notifier<double> {
+@riverpod
+class DartboardScale extends _$DartboardScale {
   @override
   double build() {
     final prefs = ref.watch(sharedPreferencesProvider);
@@ -46,10 +44,10 @@ class DartboardScaleNotifier extends Notifier<double> {
     prefs.setDouble(SharedPrefKeys.dartboardScale, newScale);
     state = newScale;
   }
-}
 
-/// Provider for the dartboard graphic's zoom scale factor.
-/// Automatically disposes of itself when no longer needed.
-final dartboardScaleProvider = NotifierProvider.autoDispose<DartboardScaleNotifier, double>(
-  DartboardScaleNotifier.new,
-);
+  /// Adjusts the zoom scale factor safely within boundaries.
+  void adjustZoom(double delta, double maxScale) {
+    final newZoom = (state + delta).clamp(0.5, maxScale);
+    setScale(newZoom);
+  }
+}

@@ -1,72 +1,79 @@
 # Dartboard Angle 🎯📐
 
-Eine moderne, performante Flutter-App zur präzisen und waagerechten Ausrichtung von Dartscheiben mithilfe der Smartphone-Kamera und den Lagesensoren (Beschleunigungssensor) des Geräts.
+A modern, high-performance Flutter application designed for precisely aligning and leveling dartboards using your smartphone's camera and accelerometer sensors.
 
-Die App projiziert eine digitale Silhouette einer Dartscheibe als SVG-Overlay über das Live-Bild der Kamera. Durch die Lagesensoren bleibt das SVG-Overlay stets perfekt waagerecht zur realen Welt ausgerichtet. So lässt sich die Kamera auf die physische Dartscheibe richten, um Abweichungen sofort zu erkennen und zu korrigieren.
+The app overlays a digital SVG silhouette of a dartboard onto a live camera feed. By reading the device's accelerometer data, the SVG overlay dynamically rotates to remain perfectly level with the physical world (gravity). This allows you to point your phone at your physical dartboard to instantly recognize and correct any mounting deviations.
 
 ---
 
 ## Features
 
-- **Echtzeit-Wasserwaage & HUD**: Dynamische Anzeige des aktuellen Neigungswinkels mit einer visuellen Röhrenlibelle (Bubble Level). Signalisiert sofort durch Farbwechsel (Grün / Orange), wenn die Ausrichtung perfekt ist (< 1.0° Abweichung).
-- **Verzerrungsfreie Kamera-Vorschau**: Intelligente Seitenverhältnis-Anpassung, die Verzerrungen des Kamerabildes auf unterschiedlichen Display-Größen verhindert.
-- **Interaktiver Zoom**: Stufenlose Zoom-Möglichkeit der Dartscheiben-Silhouette (0.5x bis 3.0x), um sie perfekt an die Entfernung zur physischen Dartscheibe anzupassen.
-- **Modernste Flutter APIs**: Nutzt Flutter `3.44.1`, Dart `3.12.1`, und moderne Framework-Features wie das neue native `RadioGroup` Widget.
-- **Riverpod 3.x State Management**: Reaktive und modulare Zustandsverwaltung über moderne `Notifier` und `NotifierProvider`-Klassen.
-- **Clean Code & Typisierung**: Keine Warnungen, keine veralteten Methoden (Nutzung von `Color.withValues(alpha: ...)` statt `withOpacity()`).
-- **Mehrsprachigkeit (i18n)**: Volle Unterstützung für Deutsch (`de`) und Englisch (`en`) mittels nativer Flutter-Lokalisierung.
+- **Distortion-Free Camera Preview:** Intelligent aspect ratio adjustments to prevent camera feed stretching on different display sizes.
+- **Interactive & Smart Zoom:** Seamless zooming functionality for the dartboard silhouette. The zoom boundaries dynamically adjust based on the device's screen size and orientation (Portrait vs. Landscape), ensuring the dartboard never overlaps with the user interface.
+- **Modern Flutter APIs:** Built with Flutter and Dart, utilizing the latest native framework features.
+- **Robust State Management:** Reactive and modular state management powered by Riverpod Code Generation (`@riverpod`), ensuring clean architecture and type safety.
+- **Advanced Camera Lifecycle:** Intelligently pauses the camera stream (`pausePreview`) when the app is moved to the background, saving significant battery life, and seamlessly resumes it upon return.
+- **Optimized Sensor Handling:** Hardware-level sensor throttling using `SensorInterval.normalInterval` (200ms), reducing CPU overhead while keeping the rotation buttery smooth.
+- **Clean Code & Theming:** Centralized theme configurations (`AppThemeData`) and fully extracted, reusable UI components.
+- **Internationalization (i18n):** Full localization support for English (`en`) and German (`de`) via native Flutter ARB templates.
 
 ---
 
-## Projektstruktur
+## Project Structure
 
-```
+```text
 lib/
-├── l10n/                     # Übersetzungsdateien (.arb & generierte Dart-Klassen)
-├── providers/                # Riverpod Notifiers & Providers (Zustand & Logik)
-│   ├── app_settings_providers.dart  # Theme (Light/Dark) & Sprachauswahl
-│   ├── camera_provider.dart         # Kamera-Initialisierung & Controller-Verwaltung
-│   └── dartboard_provider.dart      # Sensordaten-Drosselung (30 FPS) & Mathematik-Korrektur
-├── screens/                  # Benutzeroberfläche
-│   ├── home_screen.dart             # Hauptbildschirm mit Kamera-Feed, SVG & HUD
-│   ├── settings_screen.dart         # Einstellungen (Sprache, Design)
-│   └── main_navigation_screen.dart  # Navigationsleiste
-└── main.dart                 # App-Einstiegspunkt (MaterialApp & ProviderScope)
+├── l10n/                     # Translation files (.arb) and generated Dart classes
+├── providers/                # Riverpod Notifiers & Providers (State & Logic)
+│   ├── app_settings_providers.dart  # Theme (Light/Dark) & Language selection
+│   ├── camera_provider.dart         # Camera initialization & lifecycle management
+│   └── dartboard_provider.dart      # Hardware-throttled sensor data & rotation math
+├── screens/                  # User Interface
+│   ├── home_screen.dart             # Main screen (Camera feed, SVG overlay, Zoom controls)
+│   ├── settings_screen.dart         # Settings (Language, Theme)
+│   └── main_navigation_screen.dart  # Bottom navigation bar logic
+├── theme/
+│   └── app_theme.dart               # Centralized light & dark theme definitions
+├── widgets/
+│   └── status_screens.dart          # Reusable loading and error screen components
+└── main.dart                 # Application entry point
 ```
 
 ---
 
-## Installation & Ausführung
+## Installation & Execution
 
-### Voraussetzungen
+### Prerequisites
 
-Stelle sicher, dass du das Flutter SDK installiert hast.
+Ensure you have the latest stable Flutter SDK installed.
 
 ```bash
 flutter --version
 ```
 
-### Setup & Start
+### Setup & Run
 
-1. **Abhängigkeiten installieren:**
+1. **Install dependencies:**
    ```bash
    flutter pub get
    ```
 
-2. **Lokalisierung generieren:**
+2. **Generate Riverpod & Localization files:**
    ```bash
+   dart run build_runner build -d
    flutter gen-l10n
    ```
 
-3. **App starten:**
+3. **Run the application:**
    ```bash
    flutter run
    ```
 
 ---
 
-## Technologie-Stack & Design-Entscheidungen
+## Technology Stack & Design Decisions
 
-- **Sensordrosselung**: Die Sensordaten werden nativ über `samplingPeriod` auf etwa 30 FPS gedrosselt. Dies spart CPU-Leistung und Batterieladung auf Mobilgeräten.
-- **Mathematische Korrektur**: Die Drehung der SVG-Silhouette verwendet die korrigierte Winkelfunktion `math.pi / 2 - math.atan2(event.y, event.x)`, damit das Overlay synchron mit dem Kamerabild rotiert und zur physischen Umwelt in Waage bleibt.
-- **Wide-Gamut-Farbraum**: Die Verwendung von `withValues(alpha: ...)` verhindert Farbungenauigkeiten im Wide-Gamut-Farbraum und ist zukunftssicher.
+- **Hardware Sensor Throttling:** Instead of filtering the data streams manually in software, the accelerometer is configured to report at `SensorInterval.normalInterval` (approx. 200ms) directly at the OS level. This greatly preserves device battery.
+- **Mathematical Correction:** The rotation of the SVG silhouette relies on the corrected trigonometric formula `math.pi / 2 - math.atan2(event.y, event.x)`. This keeps the overlay perfectly level relative to gravity, independent of the phone's tilt.
+- **Wide-Gamut Colors:** Utilizing the modern `withValues(alpha: ...)` API ensures precise color rendering across modern wide-gamut displays.
+- **Code Generation:** Utilizing `riverpod_generator` reduces boilerplate code, guarantees consistency across providers, and eliminates common state-management errors.

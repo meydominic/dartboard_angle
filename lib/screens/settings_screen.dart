@@ -94,12 +94,12 @@ class SettingsScreen extends ConsumerWidget {
                     controlAffinity: ListTileControlAffinity.trailing,
                   ),
                   RadioListTile<Locale?>(
-                    title: Text('Deutsch', style: theme.textTheme.bodyLarge),
+                    title: Text(l10n.langGerman, style: theme.textTheme.bodyLarge),
                     value: const Locale('de'),
                     controlAffinity: ListTileControlAffinity.trailing,
                   ),
                   RadioListTile<Locale?>(
-                    title: Text('English', style: theme.textTheme.bodyLarge),
+                    title: Text(l10n.langEnglish, style: theme.textTheme.bodyLarge),
                     value: const Locale('en'),
                     controlAffinity: ListTileControlAffinity.trailing,
                   ),

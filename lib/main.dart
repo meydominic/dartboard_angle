@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:dartboard_angle/providers/app_settings_providers.dart';
 import 'package:dartboard_angle/screens/main_navigation_screen.dart';
+import 'package:dartboard_angle/theme/app_theme.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -50,20 +51,8 @@ class MyApp extends ConsumerWidget {
       themeMode: currentThemeMode,
       locale: currentLocale, 
 
-      theme: ThemeData(
-        useMaterial3: true,
-        colorScheme: ColorScheme.fromSeed(
-          seedColor: Colors.teal, 
-          brightness: Brightness.light,
-        ),
-      ),
-      darkTheme: ThemeData(
-        useMaterial3: true,
-        colorScheme: ColorScheme.fromSeed(
-          seedColor: Colors.teal, 
-          brightness: Brightness.dark,
-        ),
-      ),
+      theme: AppThemeData.lightTheme,
+      darkTheme: AppThemeData.darkTheme,
       home: const MainNavigationScreen(),
     );
   }

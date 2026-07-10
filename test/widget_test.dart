@@ -2,11 +2,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:camera/camera.dart';
 import 'package:dartboard_angle/main.dart';
-import 'package:dartboard_angle/screens/home_screen.dart';
 import 'package:dartboard_angle/providers/camera_provider.dart';
+import 'package:dartboard_angle/widgets/status_screens.dart';
 
-/// A mock notifier to simulate camera initialization failure in widget tests.
-class FakeCameraControllerNotifier extends CameraControllerNotifier {
+class FakeAppCameraController extends AppCameraController {
   @override
   Future<CameraController> build() async {
     throw Exception('No camera found');
@@ -19,7 +18,7 @@ void main() {
     await tester.pumpWidget(
       ProviderScope(
         overrides: [
-          cameraControllerProvider.overrideWith(FakeCameraControllerNotifier.new),
+          appCameraControllerProvider.overrideWith(FakeAppCameraController.new),
         ],
         child: const MyApp(),
       ),
