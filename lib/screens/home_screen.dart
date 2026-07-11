@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:camera/camera.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:wakelock_plus/wakelock_plus.dart';
 
 import 'package:dartboard_angle/l10n/app_localizations.dart';
 import 'package:dartboard_angle/providers/dartboard_provider.dart'; 
@@ -12,11 +13,33 @@ import 'package:dartboard_angle/widgets/status_screens.dart';
 
 /// The main dashboard screen containing a live camera preview, a level visualizer HUD,
 /// and a rotatable overlay of a dartboard aligned dynamically using accelerometer sensor data.
-class HomeScreen extends ConsumerWidget {
+///
+/// Keeps the device screen awake while this screen is visible so the display
+/// does not turn off during dartboard calibration.
+class HomeScreen extends ConsumerStatefulWidget {
   const HomeScreen({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends ConsumerState<HomeScreen> {
+  @override
+  void initState() {
+    super.initState();
+    // Prevent the screen from turning off while calibrating the dartboard.
+    WakelockPlus.enable();
+  }
+
+  @override
+  void dispose() {
+    // Allow the screen to turn off again when leaving the camera view.
+    WakelockPlus.disable();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
     final cameraAsync = ref.watch(appCameraControllerProvider);
     final sensorAsync = ref.watch(dartboardRotationProvider);
@@ -112,7 +135,7 @@ class HomeScreen extends ConsumerWidget {
                         child: Row(
                           mainAxisSize: MainAxisSize.min,
                           children: [
-                            _buildZoomButton(context, ref, Icons.remove, -0.1, maxScale),
+                            _buildZoomButton(context, Icons.remove, -0.1, maxScale),
                             const SizedBox(width: 24),
                             Text(
                               l10n.zoomScale(math.min(scaleValue, maxScale).toStringAsFixed(1)),
@@ -122,7 +145,7 @@ class HomeScreen extends ConsumerWidget {
                               ),
                             ),
                             const SizedBox(width: 24),
-                            _buildZoomButton(context, ref, Icons.add, 0.1, maxScale),
+                            _buildZoomButton(context, Icons.add, 0.1, maxScale),
                           ],
                         ),
                       ),
@@ -138,7 +161,7 @@ class HomeScreen extends ConsumerWidget {
   }
 
   /// Helper widget for the zoom scale adjustment buttons.
-  Widget _buildZoomButton(BuildContext context, WidgetRef ref, IconData icon, double delta, double maxScale) {
+  Widget _buildZoomButton(BuildContext context, IconData icon, double delta, double maxScale) {
     final theme = Theme.of(context);
     return Material(
       color: Colors.transparent,
@@ -160,4 +183,3 @@ class HomeScreen extends ConsumerWidget {
     );
   }
 }
-
