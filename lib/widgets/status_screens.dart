@@ -39,7 +39,7 @@ class ErrorScreen extends StatelessWidget {
         child: Text(
           message, 
           textAlign: TextAlign.center,
-          style: const TextStyle(color: Colors.red, fontSize: 18)
+          style: const TextStyle(color: Color(0xFFFF6B6B), fontSize: 18)
         ),
       ),
     ),

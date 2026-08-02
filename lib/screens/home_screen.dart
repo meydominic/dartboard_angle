@@ -24,17 +24,37 @@ class HomeScreen extends ConsumerStatefulWidget {
 }
 
 class _HomeScreenState extends ConsumerState<HomeScreen> {
+  /// Tracks the last maxScale value that triggered a clamp, preventing
+  /// duplicate post-frame callbacks on consecutive rebuilds.
+  double? _lastClampedMaxScale;
+
+  /// Estimated combined height of the top and bottom UI chrome
+  /// (AppBar / NavigationBar / zoom controls).
+  static const double _uiChromeHeight = 180.0;
+
+  /// Minimum meaningful dartboard overlay dimension in logical pixels.
+  static const double _minBoardSize = 150.0;
+
+  /// Intrinsic width and height of the SVG dartboard assets in logical pixels.
+  static const double _svgIntrinsicSize = 300.0;
+
   @override
   void initState() {
     super.initState();
     // Prevent the screen from turning off while calibrating the dartboard.
-    WakelockPlus.enable();
+    // Wrapped with catchError because the platform channel may not be available
+    // in test environments or on platforms without wakelock support.
+    WakelockPlus.enable().catchError((e) {
+      debugPrint('Failed to enable wakelock: $e');
+    });
   }
 
   @override
   void dispose() {
     // Allow the screen to turn off again when leaving the camera view.
-    WakelockPlus.disable();
+    WakelockPlus.disable().catchError((e) {
+      debugPrint('Failed to disable wakelock: $e');
+    });
     super.dispose();
   }
 
@@ -49,15 +69,23 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
 
     final displaySize = MediaQuery.sizeOf(context);
     final maxDiameterFromWidth = displaySize.width;
-    final maxDiameterFromHeight = displaySize.height - 180;
-    final safeDimension = math.max(150.0, math.min(maxDiameterFromWidth, maxDiameterFromHeight));
-    final maxScale = safeDimension / 300;
+    final maxDiameterFromHeight = displaySize.height - _uiChromeHeight;
+    final safeDimension = math.max(_minBoardSize, math.min(maxDiameterFromWidth, maxDiameterFromHeight));
+    final maxScale = safeDimension / _svgIntrinsicSize;
 
-    // Automatically clamp scale if screen size changes (e.g., rotating to landscape)
-    if (scaleValue > maxScale) {
+    // Automatically clamp scale if screen size changes (e.g., rotating to landscape).
+    // Guarded to prevent scheduling duplicate callbacks on every rebuild.
+    if (scaleValue > maxScale && _lastClampedMaxScale != maxScale) {
+      _lastClampedMaxScale = maxScale;
       WidgetsBinding.instance.addPostFrameCallback((_) {
         ref.read(dartboardScaleProvider.notifier).adjustZoom(0, maxScale);
       });
+    }
+
+    // Check for error first, because Riverpod's AsyncNotifier may report
+    // errors as AsyncLoading during retry (hasError=true, isLoading=true).
+    if (cameraAsync.hasError) {
+      return ErrorScreen(message: l10n.cameraError(cameraAsync.error.toString()));
     }
 
     return cameraAsync.when(
@@ -109,8 +137,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                       curve: Curves.easeOutCubic,
                       child: SvgPicture.asset(
                         useThickLines ? 'assets/dartboard_thick.svg' : 'assets/dartboard.svg',
-                        width: 300,
-                        height: 300,
+                        width: _svgIntrinsicSize,
+                        height: _svgIntrinsicSize,
                         colorFilter: ColorFilter.mode(
                           dartboardColor,
                           BlendMode.srcIn,

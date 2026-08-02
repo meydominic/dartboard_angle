@@ -16,7 +16,7 @@ void main() async {
   final packageInfo = await PackageInfo.fromPlatform();
   final prefs = await SharedPreferences.getInstance();
 
-runApp(
+  runApp(
     ProviderScope(
       overrides: [
         sharedPreferencesProvider.overrideWithValue(prefs),

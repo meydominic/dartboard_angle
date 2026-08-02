@@ -6,7 +6,8 @@ import 'dart:math' as math;
 
 part 'dartboard_provider.g.dart';
 
-/// Provides a stream of accelerometer events, throttled to 200ms.
+/// Provides a stream of accelerometer events, sampled at the platform's normal
+/// interval suitable for UI updates.
 /// Automatically disposes of itself when no longer listened to.
 @riverpod
 Stream<AccelerometerEvent> throttledSensor(Ref ref) async* {
@@ -30,7 +31,7 @@ AsyncValue<double> dartboardRotation(Ref ref) {
 }
 
 /// Manages the zoom scale factor for the dartboard graphic.
-@riverpod
+@Riverpod(keepAlive: true)
 class DartboardScale extends _$DartboardScale {
   @override
   double build() {

@@ -8,13 +8,15 @@ part of 'dartboard_provider.dart';
 
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // ignore_for_file: type=lint, type=warning
-/// Provides a stream of accelerometer events, throttled to 200ms.
+/// Provides a stream of accelerometer events, sampled at the platform's normal
+/// interval suitable for UI updates.
 /// Automatically disposes of itself when no longer listened to.
 
 @ProviderFor(throttledSensor)
 final throttledSensorProvider = ThrottledSensorProvider._();
 
-/// Provides a stream of accelerometer events, throttled to 200ms.
+/// Provides a stream of accelerometer events, sampled at the platform's normal
+/// interval suitable for UI updates.
 /// Automatically disposes of itself when no longer listened to.
 
 final class ThrottledSensorProvider
@@ -27,7 +29,8 @@ final class ThrottledSensorProvider
     with
         $FutureModifier<AccelerometerEvent>,
         $StreamProvider<AccelerometerEvent> {
-  /// Provides a stream of accelerometer events, throttled to 200ms.
+  /// Provides a stream of accelerometer events, sampled at the platform's normal
+  /// interval suitable for UI updates.
   /// Automatically disposes of itself when no longer listened to.
   ThrottledSensorProvider._()
     : super(
@@ -127,7 +130,7 @@ final class DartboardScaleProvider
         argument: null,
         retry: null,
         name: r'dartboardScaleProvider',
-        isAutoDispose: true,
+        isAutoDispose: false,
         dependencies: null,
         $allTransitiveDependencies: null,
       );
@@ -148,7 +151,7 @@ final class DartboardScaleProvider
   }
 }
 
-String _$dartboardScaleHash() => r'cbc386b560749af994f3baad13426e880090d624';
+String _$dartboardScaleHash() => r'c62a30ffe54a882e9efb3ddf46e813161f735725';
 
 /// Manages the zoom scale factor for the dartboard graphic.
 

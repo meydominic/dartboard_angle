@@ -11,7 +11,7 @@ part 'app_settings_providers.g.dart';
 // ==========================================
 @Riverpod(keepAlive: true)
 SharedPreferences sharedPreferences(Ref ref) {
-  throw UnimplementedError('sharedPreferencesProvider wurde nicht im ProviderScope überschrieben.');
+  throw UnimplementedError('sharedPreferencesProvider was not overridden in ProviderScope.');
 }
 
 // ==========================================
@@ -19,7 +19,7 @@ SharedPreferences sharedPreferences(Ref ref) {
 // ==========================================
 @Riverpod(keepAlive: true)
 PackageInfo packageInfo(Ref ref) {
-  throw UnimplementedError('packageInfoProvider wurde nicht im ProviderScope überschrieben.');
+  throw UnimplementedError('packageInfoProvider was not overridden in ProviderScope.');
 }
 
 // ==========================================

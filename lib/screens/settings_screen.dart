@@ -14,7 +14,7 @@ class SettingsScreen extends ConsumerWidget {
     final l10n = AppLocalizations.of(context)!;
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
-    
+
     final currentTheme = ref.watch(appThemeProvider);
     final currentLocale = ref.watch(appLocaleProvider);
     final appInfo = ref.watch(packageInfoProvider);
@@ -97,8 +97,8 @@ class SettingsScreen extends ConsumerWidget {
                   onTap: () async {
                     final currentColor = ref.read(dartboardColorProvider);
                     Color pickedColor = currentColor;
-                    
-                    await showDialog<void>(
+
+                    final result = await showDialog<bool>(
                       context: context,
                       builder: (context) {
                         return AlertDialog(
@@ -114,15 +114,21 @@ class SettingsScreen extends ConsumerWidget {
                           ),
                           actions: [
                             TextButton(
-                              onPressed: () => Navigator.of(context).pop(),
-                              child: const Text('OK'),
+                              onPressed: () => Navigator.of(context).pop(true),
+                              child: Text(MaterialLocalizations.of(context).okButtonLabel),
+                            ),
+                            TextButton(
+                              onPressed: () => Navigator.of(context).pop(false),
+                              child: Text(MaterialLocalizations.of(context).cancelButtonLabel),
                             ),
                           ],
                         );
                       },
                     );
-                    
-                    ref.read(dartboardColorProvider.notifier).setColor(pickedColor);
+
+                    if (result == true) {
+                      ref.read(dartboardColorProvider.notifier).setColor(pickedColor);
+                    }
                   },
                 ),
                 Divider(height: 1, color: colorScheme.outlineVariant),

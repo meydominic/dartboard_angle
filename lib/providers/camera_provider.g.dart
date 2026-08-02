@@ -78,7 +78,7 @@ final class AppCameraControllerProvider
         argument: null,
         retry: null,
         name: r'appCameraControllerProvider',
-        isAutoDispose: true,
+        isAutoDispose: false,
         dependencies: null,
         $allTransitiveDependencies: null,
       );
@@ -92,7 +92,7 @@ final class AppCameraControllerProvider
 }
 
 String _$appCameraControllerHash() =>
-    r'028f7b021ccc472d26cdf1ea10f62634d8f60868';
+    r'7c1a2d362f601c45f5b2077181166fe72bcedaa1';
 
 /// A notifier that manages the lifecycle and state of a [CameraController].
 /// It listens to the app lifecycle state and recreates/refreshes the controller

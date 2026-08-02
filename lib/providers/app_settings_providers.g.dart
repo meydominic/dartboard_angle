@@ -54,7 +54,7 @@ final class SharedPreferencesProvider
   }
 }
 
-String _$sharedPreferencesHash() => r'43bedba89d040ef320b9c3554e46d0ad69b68545';
+String _$sharedPreferencesHash() => r'805b265e4d470a12ba3ae9acf49fa0b42c7d720e';
 
 @ProviderFor(packageInfo)
 final packageInfoProvider = PackageInfoProvider._();
@@ -95,7 +95,7 @@ final class PackageInfoProvider
   }
 }
 
-String _$packageInfoHash() => r'77892c4c7025ecad594cfb80e7efaa0045e596b2';
+String _$packageInfoHash() => r'6367e0aa19fc258bc42db540c49a099a4cf71093';
 
 /// A notifier that manages the application's theme mode (system, light, or dark).
 

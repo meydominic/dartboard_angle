@@ -1,79 +1,99 @@
 # Dartboard Angle 🎯📐
 
-A modern, high-performance Flutter application designed for precisely aligning and leveling dartboards using your smartphone's camera and accelerometer sensors.
-
-The app overlays a digital SVG silhouette of a dartboard onto a live camera feed. By reading the device's accelerometer data, the SVG overlay dynamically rotates to remain perfectly level with the physical world (gravity). This allows you to point your phone at your physical dartboard to instantly recognize and correct any mounting deviations.
+A Flutter application that uses your smartphone's camera and accelerometer to precisely align and level physical dartboards. A digital SVG silhouette is overlaid on the live camera feed and rotates in real time to stay perfectly level with gravity — point your phone at the board to instantly spot mounting deviations.
 
 ---
 
-## Features
+## ✨ Features
 
-- **Distortion-Free Camera Preview:** Intelligent aspect ratio adjustments to prevent camera feed stretching on different display sizes.
-- **Interactive & Smart Zoom:** Seamless zooming functionality for the dartboard silhouette. The zoom boundaries dynamically adjust based on the device's screen size and orientation (Portrait vs. Landscape), ensuring the dartboard never overlaps with the user interface.
-- **Modern Flutter APIs:** Built with Flutter and Dart, utilizing the latest native framework features.
-- **Robust State Management:** Reactive and modular state management powered by Riverpod Code Generation (`@riverpod`), ensuring clean architecture and type safety.
-- **Advanced Camera Lifecycle:** Intelligently pauses the camera stream (`pausePreview`) when the app is moved to the background, saving significant battery life, and seamlessly resumes it upon return.
-- **Optimized Sensor Handling:** Hardware-level sensor throttling using `SensorInterval.normalInterval` (200ms), reducing CPU overhead while keeping the rotation buttery smooth.
-- **Clean Code & Theming:** Centralized theme configurations (`AppThemeData`) and fully extracted, reusable UI components.
-- **Internationalization (i18n):** Full localization support for English (`en`) and German (`de`) via native Flutter ARB templates.
+- **Live Camera Preview** — Distortion-free camera feed with automatic aspect ratio correction for any screen size.
+- **Real-Time Rotation** — Accelerometer-driven SVG overlay rotates dynamically using `atan2` math, independent of phone tilt.
+- **Interactive Zoom** — Pinch-style zoom buttons with dynamic boundaries that adapt to portrait/landscape orientation.
+- **Screen Wake Lock** — Keeps the display on while calibrating, so the screen never dims mid-alignment.
+- **Camera Lifecycle** — Automatically pauses the camera stream when the app moves to the background and resumes on return, saving battery.
+- **Customizable Overlay** — Adjust the dartboard silhouette's color (with alpha) and toggle thicker lines for better visibility.
+- **Dark Mode & Theming** — Light, dark, and system-following themes via Material 3 with a teal seed color scheme.
+- **Internationalization** — Full German (`de`) and English (`en`) localization using Flutter's ARB-based `gen_l10n`.
+- **Clean Architecture** — State management with Riverpod + code generation, centralized constants, and reusable widgets.
 
 ---
 
-## Project Structure
+## 🧱 Project Structure
 
 ```text
 lib/
-├── l10n/                     # Translation files (.arb) and generated Dart classes
-├── providers/                # Riverpod Notifiers & Providers (State & Logic)
-│   ├── app_settings_providers.dart  # Theme (Light/Dark) & Language selection
-│   ├── camera_provider.dart         # Camera initialization & lifecycle management
-│   └── dartboard_provider.dart      # Hardware-throttled sensor data & rotation math
-├── screens/                  # User Interface
-│   ├── home_screen.dart             # Main screen (Camera feed, SVG overlay, Zoom controls)
-│   ├── settings_screen.dart         # Settings (Language, Theme)
-│   └── main_navigation_screen.dart  # Bottom navigation bar logic
+├── constants/
+│   └── shared_pref_keys.dart          # SharedPreferences key constants
+├── l10n/                              # ARB translation files and generated localizations
+├── providers/                         # Riverpod notifiers and providers
+│   ├── app_settings_providers.dart     #   Theme, locale, color, and line thickness
+│   ├── camera_provider.dart            #   Camera initialization and lifecycle
+│   └── dartboard_provider.dart         #   Accelerometer stream and rotation math
+├── screens/
+│   ├── home_screen.dart                #   Live camera feed with SVG overlay and zoom
+│   ├── settings_screen.dart            #   Appearance, language, color picker, and about
+│   └── main_navigation_screen.dart     #   Bottom navigation bar (Home / Settings)
 ├── theme/
-│   └── app_theme.dart               # Centralized light & dark theme definitions
+│   └── app_theme.dart                  #   Material 3 light and dark theme definitions
 ├── widgets/
-│   └── status_screens.dart          # Reusable loading and error screen components
-└── main.dart                 # Application entry point
+│   └── status_screens.dart             #   Reusable LoadingScreen and ErrorScreen
+└── main.dart                           #   Entry point with ProviderScope setup
 ```
 
 ---
 
-## Installation & Execution
+## 🚀 Getting Started
 
 ### Prerequisites
 
-Ensure you have the latest stable Flutter SDK installed.
+- [Flutter SDK](https://docs.flutter.dev/get-started/install) (stable channel)
+- Android Studio / Xcode for platform builds
 
 ```bash
 flutter --version
 ```
 
-### Setup & Run
+### Setup
 
-1. **Install dependencies:**
-   ```bash
-   flutter pub get
-   ```
+```bash
+# 1. Install dependencies
+flutter pub get
 
-2. **Generate Riverpod & Localization files:**
-   ```bash
-   dart run build_runner build -d
-   flutter gen-l10n
-   ```
+# 2. Generate Riverpod code
+dart run build_runner build
 
-3. **Run the application:**
-   ```bash
-   flutter run
-   ```
+# 3. Run
+flutter run
+```
+
+Localization classes are auto-generated by Flutter's `gen_l10n` during build — no separate command needed (configured via `l10n.yaml`).
 
 ---
 
-## Technology Stack & Design Decisions
+## 🧰 Tech Stack
 
-- **Hardware Sensor Throttling:** Instead of filtering the data streams manually in software, the accelerometer is configured to report at `SensorInterval.normalInterval` (approx. 200ms) directly at the OS level. This greatly preserves device battery.
-- **Mathematical Correction:** The rotation of the SVG silhouette relies on the corrected trigonometric formula `math.pi / 2 - math.atan2(event.y, event.x)`. This keeps the overlay perfectly level relative to gravity, independent of the phone's tilt.
-- **Wide-Gamut Colors:** Utilizing the modern `withValues(alpha: ...)` API ensures precise color rendering across modern wide-gamut displays.
-- **Code Generation:** Utilizing `riverpod_generator` reduces boilerplate code, guarantees consistency across providers, and eliminates common state-management errors.
+| Category | Package |
+|---|---|
+| State Management | [`flutter_riverpod`](https://pub.dev/packages/flutter_riverpod) + [`riverpod_generator`](https://pub.dev/packages/riverpod_generator) |
+| Camera | [`camera`](https://pub.dev/packages/camera) |
+| Sensors | [`sensors_plus`](https://pub.dev/packages/sensors_plus) |
+| SVG Rendering | [`flutter_svg`](https://pub.dev/packages/flutter_svg) |
+| Persistence | [`shared_preferences`](https://pub.dev/packages/shared_preferences) |
+| App Info | [`package_info_plus`](https://pub.dev/packages/package_info_plus) |
+| Wake Lock | [`wakelock_plus`](https://pub.dev/packages/wakelock_plus) |
+| Color Picker | [`flutter_colorpicker`](https://pub.dev/packages/flutter_colorpicker) |
+| Internationalization | [`flutter_localizations`](https://api.flutter.dev/flutter/flutter_localizations/flutter_localizations-library.html) + [`intl`](https://pub.dev/packages/intl) |
+
+---
+
+## 📐 How It Works
+
+- **Rotation Math** — The overlay angle is computed as `π/2 − atan2(y, x)` from raw accelerometer events, which compensates for device pitch and roll to keep the silhouette gravity-aligned.
+- **Sensor Throttling** — The accelerometer samples at the platform's `normalInterval` (OS-level rate suitable for UI updates), avoiding expensive Dart-side filtering.
+- **State Architecture** — Providers follow the `@riverpod` / `@Riverpod(keepAlive: true)` pattern with a clear separation between transient UI state (auto-dispose) and persisted settings (keep-alive).
+
+---
+
+## 📝 License
+
+This project is private and not published to pub.dev.
