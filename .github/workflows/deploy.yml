@@ -43,7 +43,7 @@ jobs:
         run: flutter build web --base-href /
 
       - name: Add CNAME for custom domain
-        run: echo "dartboard_angle.apps.meydom.dev" > build/web/CNAME
+        run: echo "dartboard-angle.apps.meydom.dev" > build/web/CNAME
 
       - name: Setup Pages
         uses: actions/configure-pages@v4
