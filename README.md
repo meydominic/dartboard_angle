@@ -108,12 +108,26 @@ The output lands in `build/web/` and contains:
 
 ### Deploy
 
-Deploy the contents of `build/web/` to any static host that serves over
+The repo includes a **GitHub Actions workflow** (`.github/workflows/deploy.yml`)
+that builds and deploys to **GitHub Pages** whenever a
+[GitHub Release](https://docs.github.com/en/repositories/releasing-projects-on-github/managing-releases-in-a-repository) is published.
+
+To complete the setup:
+
+1. **DNS**: Set a CNAME record for `dartboard_angle.apps.meydom.dev` pointing to
+   `meydominic.github.io`.
+2. **GitHub**: In the repo Settings → Pages, set the source to **GitHub Actions**.
+   Add `dartboard_angle.apps.meydom.dev` as the custom domain.
+3. **Release**: Create a new Release via the GitHub UI (or `gh release create`).
+   The workflow triggers automatically on publish.
+
+The workflow can also be triggered manually via the Actions tab (`workflow_dispatch`).
+
+For other hosts, deploy `build/web/` to any static host that serves over
 **HTTPS** (required for camera and motion sensors in PWAs):
 
 - [Netlify](https://www.netlify.com/) — drag & drop `build/web`
 - [Vercel](https://vercel.com/) — `vercel build/web`
-- [GitHub Pages](https://pages.github.com/) — push to `gh-pages` branch
 - [Firebase Hosting](https://firebase.google.com/docs/hosting) — `firebase deploy`
 
 ### Sensor support by platform
