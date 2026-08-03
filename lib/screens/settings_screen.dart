@@ -18,6 +18,7 @@ class SettingsScreen extends ConsumerWidget {
     final currentTheme = ref.watch(appThemeProvider);
     final currentLocale = ref.watch(appLocaleProvider);
     final appInfo = ref.watch(packageInfoProvider);
+    final versionAsync = ref.watch(appVersionProvider);
 
     return Scaffold(
       appBar: AppBar(
@@ -196,7 +197,11 @@ class SettingsScreen extends ConsumerWidget {
             child: ListTile(
               leading: Icon(Icons.phone_android_outlined, color: colorScheme.primary),
               title: Text(appInfo.appName, style: theme.textTheme.bodyLarge?.copyWith(fontWeight: FontWeight.bold)),
-              subtitle: Text('Version ${appInfo.version}', style: theme.textTheme.bodyMedium?.copyWith(color: colorScheme.onSurfaceVariant)),
+              subtitle: versionAsync.when(
+                data: (version) => Text('Version $version', style: theme.textTheme.bodyMedium?.copyWith(color: colorScheme.onSurfaceVariant)),
+                loading: () => Text('Version ${appInfo.version}', style: theme.textTheme.bodyMedium?.copyWith(color: colorScheme.onSurfaceVariant)),
+                error: (_, _) => Text('Version ${appInfo.version}', style: theme.textTheme.bodyMedium?.copyWith(color: colorScheme.onSurfaceVariant)),
+              ),
             ),
           ),
         ],

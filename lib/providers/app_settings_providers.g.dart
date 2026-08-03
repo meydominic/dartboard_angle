@@ -97,6 +97,59 @@ final class PackageInfoProvider
 
 String _$packageInfoHash() => r'6367e0aa19fc258bc42db540c49a099a4cf71093';
 
+/// Returns the application version string.
+///
+/// On web builds deployed via GitHub Actions, the release version is injected
+/// into `assets/version.json` at build time. If that file contains a non-"dev"
+/// version it is used; otherwise the version from [PackageInfo] is used
+/// (which reads `pubspec.yaml` or native build configuration).
+
+@ProviderFor(appVersion)
+final appVersionProvider = AppVersionProvider._();
+
+/// Returns the application version string.
+///
+/// On web builds deployed via GitHub Actions, the release version is injected
+/// into `assets/version.json` at build time. If that file contains a non-"dev"
+/// version it is used; otherwise the version from [PackageInfo] is used
+/// (which reads `pubspec.yaml` or native build configuration).
+
+final class AppVersionProvider
+    extends $FunctionalProvider<AsyncValue<String>, String, FutureOr<String>>
+    with $FutureModifier<String>, $FutureProvider<String> {
+  /// Returns the application version string.
+  ///
+  /// On web builds deployed via GitHub Actions, the release version is injected
+  /// into `assets/version.json` at build time. If that file contains a non-"dev"
+  /// version it is used; otherwise the version from [PackageInfo] is used
+  /// (which reads `pubspec.yaml` or native build configuration).
+  AppVersionProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'appVersionProvider',
+        isAutoDispose: false,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$appVersionHash();
+
+  @$internal
+  @override
+  $FutureProviderElement<String> $createElement($ProviderPointer pointer) =>
+      $FutureProviderElement(pointer);
+
+  @override
+  FutureOr<String> create(Ref ref) {
+    return appVersion(ref);
+  }
+}
+
+String _$appVersionHash() => r'8708580b06092d96909681c98d784103bedd2f4e';
+
 /// A notifier that manages the application's theme mode (system, light, or dark).
 
 @ProviderFor(AppTheme)

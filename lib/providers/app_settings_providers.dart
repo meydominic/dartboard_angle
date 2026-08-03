@@ -1,5 +1,8 @@
+import 'dart:convert';
+
 import 'package:dartboard_angle/constants/shared_pref_keys.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -20,6 +23,33 @@ SharedPreferences sharedPreferences(Ref ref) {
 @Riverpod(keepAlive: true)
 PackageInfo packageInfo(Ref ref) {
   throw UnimplementedError('packageInfoProvider was not overridden in ProviderScope.');
+}
+
+// ==========================================
+// APP VERSION
+// ==========================================
+
+/// Returns the application version string.
+///
+/// On web builds deployed via GitHub Actions, the release version is injected
+/// into `assets/version.json` at build time. If that file contains a non-"dev"
+/// version it is used; otherwise the version from [PackageInfo] is used
+/// (which reads `pubspec.yaml` or native build configuration).
+@Riverpod(keepAlive: true)
+Future<String> appVersion(Ref ref) async {
+  try {
+    final jsonStr = await rootBundle.loadString('assets/version.json');
+    final json = jsonDecode(jsonStr) as Map<String, dynamic>;
+    final version = json['version'] as String?;
+    if (version != null && version != 'dev') {
+      return version;
+    }
+  } catch (_) {
+    // version.json not found — use PackageInfo fallback below.
+  }
+
+  final packageInfo = ref.watch(packageInfoProvider);
+  return packageInfo.version;
 }
 
 // ==========================================

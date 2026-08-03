@@ -33,6 +33,14 @@ jobs:
       - name: Install dependencies
         run: flutter pub get
 
+      - name: Inject release version
+        run: |
+          VERSION="${{ github.ref_name }}"
+          # Strip leading 'v' if present (e.g. v0.1.0 → 0.1.0)
+          VERSION="${VERSION#v}"
+          echo "{\"version\": \"$VERSION\"}" > assets/version.json
+          echo "App version set to: $VERSION"
+
       - name: Generate localizations
         run: flutter gen-l10n
 
