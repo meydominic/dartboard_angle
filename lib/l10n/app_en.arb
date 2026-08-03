@@ -50,5 +50,6 @@
   "sensorPermissionTitle": "Motion Access Required",
   "sensorPermissionBody": "Your browser needs permission to access the motion sensors so the dartboard overlay can rotate with the spirit level.",
   "sensorPermissionButton": "Enable Motion Sensor",
-  "cameraRetry": "Retry Camera"
+  "cameraRetry": "Retry Camera",
+  "sensorActivationPrompt": "Tap the screen to start"
 }

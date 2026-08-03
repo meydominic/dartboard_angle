@@ -96,153 +96,206 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
         onRetry: () => ref.invalidate(appCameraControllerProvider),
       ),
       data: (controller) {
-        return sensorAsync.when(
-          loading: () => LoadingScreen(title: l10n.waitingForSensorData),
-          error: (err, _) => ErrorScreen(message: l10n.sensorError(err.toString())),
-          data: (rotationAngle) {
-            final safeAngle = rotationAngle.isFinite ? rotationAngle : 0.0;
+        // Show error screen if sensor stream has errored.
+        if (sensorAsync.hasError) {
+          return ErrorScreen(
+            message: l10n.sensorError(sensorAsync.error.toString()),
+          );
+        }
 
-            return Scaffold(
-              backgroundColor: Colors.black,
-              body: Stack(
-                alignment: Alignment.center,
-                children: [
-                  // Camera preview.
-                  LayoutBuilder(
-                    builder: (context, constraints) {
-                      final mediaSize = MediaQuery.of(context).size;
-                      final deviceRatio = mediaSize.width / mediaSize.height;
-                      final cameraRatio = 1 / controller.value.aspectRatio;
-                      final scale = deviceRatio > cameraRatio
-                          ? deviceRatio / cameraRatio
-                          : cameraRatio / deviceRatio;
+        // Use real sensor angle when available, otherwise default to 0°.
+        final hasSensorData = sensorAsync is AsyncData<double>;
+        final safeAngle = switch (sensorAsync) {
+          AsyncData(:final value) when value.isFinite => value,
+          _ => 0.0,
+        };
 
-                      return ClipRect(
-                        child: SizedBox.expand(
-                          child: Transform.scale(
-                            scale: scale,
-                            child: Center(
-                              child: CameraPreview(controller),
-                            ),
-                          ),
-                        ),
-                      );
-                    },
-                  ),
+        return Scaffold(
+          backgroundColor: Colors.black,
+          body: GestureDetector(
+            // Registering a user tap satisfies iOS's requirement that
+            // DeviceMotionEvent must be triggered by a user gesture.
+            // Without a tap, devicemotion events remain null on iOS Safari.
+            onTap: () {},
+            child: Stack(
+              alignment: Alignment.center,
+              children: [
+                // Camera preview – displayed at native 1.0 zoom without cropping.
+                Center(
+                  child: CameraPreview(controller),
+                ),
 
-                  // Dartboard SVG overlay.
-                  Transform.scale(
-                    scale: scaleValue,
-                    child: AnimatedRotation(
-                      turns: safeAngle / (2 * math.pi),
-                      duration: const Duration(milliseconds: 200),
-                      curve: Curves.easeOutCubic,
-                      child: SvgPicture.asset(
-                        useThickLines ? 'assets/dartboard_thick.svg' : 'assets/dartboard.svg',
-                        width: _svgIntrinsicSize,
-                        height: _svgIntrinsicSize,
-                        colorFilter: ColorFilter.mode(
-                          dartboardColor,
-                          BlendMode.srcIn,
-                        ),
+                // Dartboard SVG overlay – always visible, rotates once sensor data arrives.
+                Transform.scale(
+                  scale: scaleValue,
+                  child: AnimatedRotation(
+                    turns: safeAngle / (2 * math.pi),
+                    duration: const Duration(milliseconds: 200),
+                    curve: Curves.easeOutCubic,
+                    child: SvgPicture.asset(
+                      useThickLines
+                          ? 'assets/dartboard_thick.svg'
+                          : 'assets/dartboard.svg',
+                      width: _svgIntrinsicSize,
+                      height: _svgIntrinsicSize,
+                      colorFilter: ColorFilter.mode(
+                        dartboardColor,
+                        BlendMode.srcIn,
                       ),
                     ),
                   ),
+                ),
 
-                  // Motion-sensor permission prompt (iOS Safari / WKWebView only).
-                  if (_sensorPermissionGranted == false)
-                    Positioned(
-                      top: 0,
-                      left: 0,
-                      right: 0,
-                      bottom: 0,
-                      child: Container(
-                        color: Colors.black.withValues(alpha: 0.7),
-                        child: Center(
-                          child: Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 32),
-                            child: Column(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                const Icon(Icons.sensors, size: 48, color: Colors.white70),
-                                const SizedBox(height: 16),
-                                Text(
-                                  l10n.sensorPermissionTitle,
-                                  textAlign: TextAlign.center,
-                                  style: Theme.of(context)
-                                      .textTheme
-                                      .titleMedium
-                                      ?.copyWith(color: Colors.white),
-                                ),
-                                const SizedBox(height: 8),
-                                Text(
-                                  l10n.sensorPermissionBody,
-                                  textAlign: TextAlign.center,
-                                  style: Theme.of(context)
-                                      .textTheme
-                                      .bodyMedium
-                                      ?.copyWith(color: Colors.white60),
-                                ),
-                                const SizedBox(height: 24),
-                                FilledButton.icon(
-                                  onPressed: _sensorPermissionPending
-                                      ? null
-                                      : _handleSensorPermissionRequest,
-                                  icon: _sensorPermissionPending
-                                      ? const SizedBox(
-                                          width: 18,
-                                          height: 18,
-                                          child: CircularProgressIndicator(
-                                            strokeWidth: 2,
-                                            color: Colors.white,
-                                          ),
-                                        )
-                                      : const Icon(Icons.check_circle_outline),
-                                  label: Text(l10n.sensorPermissionButton),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-
-                  // Zoom controls.
+                // Sensor activation prompt – shown while waiting for the first sensor event.
+                // On iOS Safari the devicemotion API requires a user gesture before it
+                // starts firing; tapping anywhere on the screen satisfies this.
+                if (!hasSensorData && _sensorPermissionGranted != false)
                   Positioned(
-                    bottom: 24,
+                    top: 0,
                     left: 0,
                     right: 0,
-                    child: Center(
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                        decoration: BoxDecoration(
-                          color: Colors.black.withValues(alpha: 0.5),
-                          borderRadius: BorderRadius.circular(30),
-                          border: Border.all(color: Colors.white.withValues(alpha: 0.1), width: 1),
-                        ),
-                        child: Row(
+                    bottom: 0,
+                    child: Container(
+                      color: Colors.black.withValues(alpha: 0.5),
+                      child: Center(
+                        child: Column(
                           mainAxisSize: MainAxisSize.min,
                           children: [
-                            _buildZoomButton(context, Icons.remove, -0.1, maxScale),
-                            const SizedBox(width: 24),
-                            Text(
-                              l10n.zoomScale(math.min(scaleValue, maxScale).toStringAsFixed(1)),
-                              style: Theme.of(context).textTheme.labelLarge?.copyWith(
-                                color: Colors.white,
-                                fontWeight: FontWeight.bold,
+                            const SizedBox(
+                              width: 36,
+                              height: 36,
+                              child: CircularProgressIndicator(
+                                strokeWidth: 2.5,
+                                color: Colors.white70,
                               ),
                             ),
-                            const SizedBox(width: 24),
-                            _buildZoomButton(context, Icons.add, 0.1, maxScale),
+                            const SizedBox(height: 20),
+                            Text(
+                              l10n.waitingForSensorData,
+                              textAlign: TextAlign.center,
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .titleMedium
+                                  ?.copyWith(color: Colors.white),
+                            ),
+                            const SizedBox(height: 8),
+                            Text(
+                              l10n.sensorActivationPrompt,
+                              textAlign: TextAlign.center,
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .bodyMedium
+                                  ?.copyWith(color: Colors.white60),
+                            ),
                           ],
                         ),
                       ),
                     ),
                   ),
-                ],
-              ),
-            );
-          },
+
+                // Motion-sensor permission prompt (iOS Safari / WKWebView only).
+                if (_sensorPermissionGranted == false)
+                  Positioned(
+                    top: 0,
+                    left: 0,
+                    right: 0,
+                    bottom: 0,
+                    child: Container(
+                      color: Colors.black.withValues(alpha: 0.7),
+                      child: Center(
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 32),
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              const Icon(Icons.sensors,
+                                  size: 48, color: Colors.white70),
+                              const SizedBox(height: 16),
+                              Text(
+                                l10n.sensorPermissionTitle,
+                                textAlign: TextAlign.center,
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .titleMedium
+                                    ?.copyWith(color: Colors.white),
+                              ),
+                              const SizedBox(height: 8),
+                              Text(
+                                l10n.sensorPermissionBody,
+                                textAlign: TextAlign.center,
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .bodyMedium
+                                    ?.copyWith(color: Colors.white60),
+                              ),
+                              const SizedBox(height: 24),
+                              FilledButton.icon(
+                                onPressed: _sensorPermissionPending
+                                    ? null
+                                    : _handleSensorPermissionRequest,
+                                icon: _sensorPermissionPending
+                                    ? const SizedBox(
+                                        width: 18,
+                                        height: 18,
+                                        child: CircularProgressIndicator(
+                                          strokeWidth: 2,
+                                          color: Colors.white,
+                                        ),
+                                      )
+                                    : const Icon(Icons.check_circle_outline),
+                                label: Text(l10n.sensorPermissionButton),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+
+                // Zoom controls.
+                Positioned(
+                  bottom: 24,
+                  left: 0,
+                  right: 0,
+                  child: Center(
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 16, vertical: 8),
+                      decoration: BoxDecoration(
+                        color: Colors.black.withValues(alpha: 0.5),
+                        borderRadius: BorderRadius.circular(30),
+                        border: Border.all(
+                            color: Colors.white.withValues(alpha: 0.1),
+                            width: 1),
+                      ),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          _buildZoomButton(
+                              context, Icons.remove, -0.1, maxScale),
+                          const SizedBox(width: 24),
+                          Text(
+                            l10n.zoomScale(
+                                math.min(scaleValue, maxScale).toStringAsFixed(1)),
+                            style: Theme.of(context)
+                                .textTheme
+                                .labelLarge
+                                ?.copyWith(
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                          ),
+                          const SizedBox(width: 24),
+                          _buildZoomButton(
+                              context, Icons.add, 0.1, maxScale),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
         );
       },
     );

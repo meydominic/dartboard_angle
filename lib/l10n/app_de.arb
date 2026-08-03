@@ -50,5 +50,6 @@
   "sensorPermissionTitle": "Bewegungssensor-Zugriff erforderlich",
   "sensorPermissionBody": "Dein Browser benötigt die Erlaubnis, auf die Lagesensoren zuzugreifen, damit die Dartscheiben-Silhouette mit der Wasserwaage rotieren kann.",
   "sensorPermissionButton": "Bewegungssensor aktivieren",
-  "cameraRetry": "Kamera erneut versuchen"
+  "cameraRetry": "Kamera erneut versuchen",
+  "sensorActivationPrompt": "Zum Starten auf das Display tippen"
 }
