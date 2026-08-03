@@ -92,4 +92,14 @@ class AppLocalizationsDe extends AppLocalizations {
   @override
   String get dartboardThickLinesSub =>
       'Erhöht die Liniendicke der Silhouette für bessere Sichtbarkeit';
+
+  @override
+  String get sensorPermissionTitle => 'Bewegungssensor-Zugriff erforderlich';
+
+  @override
+  String get sensorPermissionBody =>
+      'Dein Browser benötigt die Erlaubnis, auf die Lagesensoren zuzugreifen, damit die Dartscheiben-Silhouette mit der Wasserwaage rotieren kann.';
+
+  @override
+  String get sensorPermissionButton => 'Bewegungssensor aktivieren';
 }

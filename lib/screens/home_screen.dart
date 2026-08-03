@@ -6,9 +6,10 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:wakelock_plus/wakelock_plus.dart';
 
 import 'package:dartboard_angle/l10n/app_localizations.dart';
-import 'package:dartboard_angle/providers/dartboard_provider.dart'; 
+import 'package:dartboard_angle/providers/dartboard_provider.dart';
 import 'package:dartboard_angle/providers/camera_provider.dart';
 import 'package:dartboard_angle/providers/app_settings_providers.dart';
+import 'package:dartboard_angle/services/sensor_permission_service.dart';
 import 'package:dartboard_angle/widgets/status_screens.dart';
 
 /// The main dashboard screen containing a live camera preview, a level visualizer HUD,
@@ -37,6 +38,13 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
 
   /// Intrinsic width and height of the SVG dartboard assets in logical pixels.
   static const double _svgIntrinsicSize = 300.0;
+
+  /// Whether the device-motion permission dialog has been resolved.
+  /// Starts `true` on platforms that never need a permission dialog.
+  bool _sensorPermissionGranted = !needsSensorPermission;
+
+  /// Whether a permission request is currently in flight (prevents double-tap).
+  bool _sensorPermissionPending = false;
 
   @override
   void initState() {
@@ -147,6 +155,70 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                     ),
                   ),
 
+                  // iOS motion-sensor permission prompt (web only).
+                  // Displayed when the browser requires an explicit user gesture
+                  // before the accelerometer will deliver real values.
+                  if (!_sensorPermissionGranted)
+                    Positioned(
+                      top: 0,
+                      left: 0,
+                      right: 0,
+                      bottom: 0,
+                      child: Container(
+                        color: Colors.black.withValues(alpha: 0.7),
+                        child: Center(
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 32),
+                            child: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                const Icon(
+                                  Icons.sensors,
+                                  size: 48,
+                                  color: Colors.white70,
+                                ),
+                                const SizedBox(height: 16),
+                                Text(
+                                  l10n.sensorPermissionTitle,
+                                  textAlign: TextAlign.center,
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .titleMedium
+                                      ?.copyWith(color: Colors.white),
+                                ),
+                                const SizedBox(height: 8),
+                                Text(
+                                  l10n.sensorPermissionBody,
+                                  textAlign: TextAlign.center,
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .bodyMedium
+                                      ?.copyWith(color: Colors.white60),
+                                ),
+                                const SizedBox(height: 24),
+                                FilledButton.icon(
+                                  onPressed: _sensorPermissionPending
+                                      ? null
+                                      : () => _requestSensorPermission(),
+                                  icon: _sensorPermissionPending
+                                      ? const SizedBox(
+                                          width: 18,
+                                          height: 18,
+                                          child: CircularProgressIndicator(
+                                            strokeWidth: 2,
+                                            color: Colors.white,
+                                          ),
+                                        )
+                                      : const Icon(Icons.check_circle_outline),
+                                  label: Text(l10n.sensorPermissionButton),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+
                   // Zoom scale controls.
                   Positioned(
                     bottom: 24,
@@ -186,6 +258,28 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
         );
       },
     );
+  }
+
+  /// Requests device-motion permission on platforms that require it
+  /// (iOS Safari / WKWebView). Must be called from a user gesture.
+  Future<void> _requestSensorPermission() async {
+    setState(() => _sensorPermissionPending = true);
+    try {
+      final granted = await requestSensorPermission();
+      if (mounted) {
+        setState(() {
+          _sensorPermissionGranted = granted;
+          _sensorPermissionPending = false;
+        });
+      }
+    } catch (_) {
+      if (mounted) {
+        setState(() {
+          _sensorPermissionGranted = true; // don't block the UI on error
+          _sensorPermissionPending = false;
+        });
+      }
+    }
   }
 
   /// Helper widget for the zoom scale adjustment buttons.

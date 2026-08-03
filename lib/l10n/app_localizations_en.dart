@@ -92,4 +92,14 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get dartboardThickLinesSub =>
       'Increases the silhouette line thickness for better visibility';
+
+  @override
+  String get sensorPermissionTitle => 'Motion Access Required';
+
+  @override
+  String get sensorPermissionBody =>
+      'Your browser needs permission to access the motion sensors so the dartboard overlay can rotate with the spirit level.';
+
+  @override
+  String get sensorPermissionButton => 'Enable Motion Sensor';
 }

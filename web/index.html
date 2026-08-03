@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
   <!--
     If you are serving your web app in a path other than the root, change the
@@ -18,19 +18,30 @@
 
   <meta charset="UTF-8">
   <meta content="IE=Edge" http-equiv="X-UA-Compatible">
-  <meta name="description" content="A new Flutter project.">
+  <meta name="description" content="Use your phone's camera and accelerometer to precisely align and level physical dartboards. A digital overlay rotates in real time to stay perfectly level with gravity.">
 
-  <!-- iOS meta tags & icons -->
+  <!-- Viewport: must include viewport-fit=cover for iOS notch / Dynamic Island -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+
+  <!-- PWA: Android / Chrome -->
   <meta name="mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black">
-  <meta name="apple-mobile-web-app-title" content="dartboard_angle">
+  <meta name="theme-color" content="#0D9488">
+
+  <!-- PWA: iOS Safari -->
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Dartboard Angle">
   <link rel="apple-touch-icon" href="icons/Icon-192.png">
+  <link rel="apple-touch-icon" sizes="512x512" href="icons/Icon-512.png">
 
   <!-- Favicon -->
-  <link rel="icon" type="image/png" href="favicon.png"/>
+  <link rel="icon" type="image/png" href="favicon.png">
 
-  <title>dartboard_angle</title>
+  <title>Dartboard Angle</title>
   <link rel="manifest" href="manifest.json">
+
+  <!-- Sensor polyfill: provides Accelerometer API on iOS Safari via DeviceMotionEvent -->
+  <script src="sensor_polyfill.js"></script>
 </head>
 <body>
   <!--

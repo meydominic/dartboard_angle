@@ -253,6 +253,24 @@ abstract class AppLocalizations {
   /// In de, this message translates to:
   /// **'Erhöht die Liniendicke der Silhouette für bessere Sichtbarkeit'**
   String get dartboardThickLinesSub;
+
+  /// No description provided for @sensorPermissionTitle.
+  ///
+  /// In de, this message translates to:
+  /// **'Bewegungssensor-Zugriff erforderlich'**
+  String get sensorPermissionTitle;
+
+  /// No description provided for @sensorPermissionBody.
+  ///
+  /// In de, this message translates to:
+  /// **'Dein Browser benötigt die Erlaubnis, auf die Lagesensoren zuzugreifen, damit die Dartscheiben-Silhouette mit der Wasserwaage rotieren kann.'**
+  String get sensorPermissionBody;
+
+  /// No description provided for @sensorPermissionButton.
+  ///
+  /// In de, this message translates to:
+  /// **'Bewegungssensor aktivieren'**
+  String get sensorPermissionButton;
 }
 
 class _AppLocalizationsDelegate

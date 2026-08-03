@@ -46,5 +46,8 @@
   "dartboardColorSub": "Farbe der projizierten Silhouette",
   "pickColor": "Farbe wählen",
   "dartboardThickLines": "Dickere Linien anzeigen",
-  "dartboardThickLinesSub": "Erhöht die Liniendicke der Silhouette für bessere Sichtbarkeit"
+  "dartboardThickLinesSub": "Erhöht die Liniendicke der Silhouette für bessere Sichtbarkeit",
+  "sensorPermissionTitle": "Bewegungssensor-Zugriff erforderlich",
+  "sensorPermissionBody": "Dein Browser benötigt die Erlaubnis, auf die Lagesensoren zuzugreifen, damit die Dartscheiben-Silhouette mit der Wasserwaage rotieren kann.",
+  "sensorPermissionButton": "Bewegungssensor aktivieren"
 }
