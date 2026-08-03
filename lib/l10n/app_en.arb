@@ -49,5 +49,6 @@
   "dartboardThickLinesSub": "Increases the silhouette line thickness for better visibility",
   "sensorPermissionTitle": "Motion Access Required",
   "sensorPermissionBody": "Your browser needs permission to access the motion sensors so the dartboard overlay can rotate with the spirit level.",
-  "sensorPermissionButton": "Enable Motion Sensor"
+  "sensorPermissionButton": "Enable Motion Sensor",
+  "cameraRetry": "Retry Camera"
 }

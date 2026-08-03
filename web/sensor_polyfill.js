@@ -128,13 +128,24 @@
   // iOS 13+ permission helper
   //
   // DeviceMotionEvent.requestPermission() must be called from a user gesture
-  // (e.g. a button tap). We expose a convenience function so Flutter can
-  // trigger it via JS interop when the user taps a "Start" / permission button.
+  // (e.g. a button tap). We expose two functions:
+  //
+  //   __dartboardNeedsSensorPermission  → true only on iOS 13+ (Safari / WKWebView)
+  //   __dartboardRequestMotionPermission → triggers the native dialog or resolves
   // ---------------------------------------------------------------------------
   if (
     typeof DeviceMotionEvent !== 'undefined' &&
     typeof DeviceMotionEvent.requestPermission === 'function'
   ) {
+    /**
+     * Returns true when the browser requires an explicit permission dialog
+     * (iOS 13+ Safari / WKWebView).
+     * @returns {boolean}
+     */
+    window.__dartboardNeedsSensorPermission = function () {
+      return true;
+    };
+
     /**
      * Requests DeviceMotion permission on iOS.
      * @returns {Promise<'granted'|'denied'>}
@@ -144,6 +155,10 @@
     };
   } else {
     // On platforms that don't need a permission dialog, resolve immediately.
+    window.__dartboardNeedsSensorPermission = function () {
+      return false;
+    };
+
     window.__dartboardRequestMotionPermission = function () {
       return Promise.resolve('granted');
     };

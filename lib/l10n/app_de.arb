@@ -49,5 +49,6 @@
   "dartboardThickLinesSub": "Erhöht die Liniendicke der Silhouette für bessere Sichtbarkeit",
   "sensorPermissionTitle": "Bewegungssensor-Zugriff erforderlich",
   "sensorPermissionBody": "Dein Browser benötigt die Erlaubnis, auf die Lagesensoren zuzugreifen, damit die Dartscheiben-Silhouette mit der Wasserwaage rotieren kann.",
-  "sensorPermissionButton": "Bewegungssensor aktivieren"
+  "sensorPermissionButton": "Bewegungssensor aktivieren",
+  "cameraRetry": "Kamera erneut versuchen"
 }

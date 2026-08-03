@@ -30,9 +30,16 @@ class AppCameraController extends _$AppCameraController {
       throw Exception('No camera found on the device');
     }
 
+    // Prefer the back-facing camera. On web, the front camera is sometimes
+    // listed first, which gives the wrong default for a dartboard-alignment app.
+    final camera = cameras.firstWhere(
+      (c) => c.lensDirection == CameraLensDirection.back,
+      orElse: () => cameras.first,
+    );
+
     try {
-      // Initialize the camera controller using the first camera and maximum resolution preset.
-      final controller = CameraController(cameras[0], ResolutionPreset.max, enableAudio: false);
+      // Initialize the camera controller with maximum resolution preset.
+      final controller = CameraController(camera, ResolutionPreset.max, enableAudio: false);
       await controller.initialize();
 
       // Ensure the controller is disposed of when the provider is disposed to release hardware resources.

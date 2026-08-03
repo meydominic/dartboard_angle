@@ -3,6 +3,9 @@ library;
 
 import 'dart:js_interop';
 
+@JS('__dartboardNeedsSensorPermission')
+external JSBoolean _needsSensorPermission();
+
 @JS('__dartboardRequestMotionPermission')
 external JSPromise<JSString> _requestMotionPermission();
 
@@ -12,6 +15,18 @@ external JSPromise<JSString> _requestMotionPermission();
 /// On the web this is conservatively `true` because we cannot statically
 /// determine whether the browser is Safari / WKWebView on iOS.
 const bool needsSensorPermission = true;
+
+/// Checks at runtime whether the current browser actually requires a
+/// motion-sensor permission dialog (iOS 13+ Safari / WKWebView).
+///
+/// On Chrome / Android this returns `false` so no permission UI is shown.
+Future<bool> checkNeedsSensorPermission() async {
+  try {
+    return _needsSensorPermission().toDart;
+  } catch (_) {
+    return false;
+  }
+}
 
 /// Request motion sensor permission via the polyfill helper.
 ///

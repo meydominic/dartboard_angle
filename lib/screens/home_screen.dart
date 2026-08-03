@@ -25,41 +25,35 @@ class HomeScreen extends ConsumerStatefulWidget {
 }
 
 class _HomeScreenState extends ConsumerState<HomeScreen> {
-  /// Tracks the last maxScale value that triggered a clamp, preventing
-  /// duplicate post-frame callbacks on consecutive rebuilds.
   double? _lastClampedMaxScale;
 
-  /// Estimated combined height of the top and bottom UI chrome
-  /// (AppBar / NavigationBar / zoom controls).
   static const double _uiChromeHeight = 180.0;
-
-  /// Minimum meaningful dartboard overlay dimension in logical pixels.
   static const double _minBoardSize = 150.0;
-
-  /// Intrinsic width and height of the SVG dartboard assets in logical pixels.
   static const double _svgIntrinsicSize = 300.0;
 
-  /// Whether the device-motion permission dialog has been resolved.
-  /// Starts `true` on platforms that never need a permission dialog.
-  bool _sensorPermissionGranted = !needsSensorPermission;
-
-  /// Whether a permission request is currently in flight (prevents double-tap).
+  /// `null` until the runtime browser check completes, then `false` when
+  /// a permission dialog is needed, `true` otherwise.
+  bool? _sensorPermissionGranted;
   bool _sensorPermissionPending = false;
 
   @override
   void initState() {
     super.initState();
-    // Prevent the screen from turning off while calibrating the dartboard.
-    // Wrapped with catchError because the platform channel may not be available
-    // in test environments or on platforms without wakelock support.
     WakelockPlus.enable().catchError((e) {
       debugPrint('Failed to enable wakelock: $e');
     });
+    _initSensorPermissionState();
+  }
+
+  Future<void> _initSensorPermissionState() async {
+    final needsPermission = await checkNeedsSensorPermission();
+    if (mounted) {
+      setState(() => _sensorPermissionGranted = !needsPermission);
+    }
   }
 
   @override
   void dispose() {
-    // Allow the screen to turn off again when leaving the camera view.
     WakelockPlus.disable().catchError((e) {
       debugPrint('Failed to disable wakelock: $e');
     });
@@ -81,8 +75,6 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     final safeDimension = math.max(_minBoardSize, math.min(maxDiameterFromWidth, maxDiameterFromHeight));
     final maxScale = safeDimension / _svgIntrinsicSize;
 
-    // Automatically clamp scale if screen size changes (e.g., rotating to landscape).
-    // Guarded to prevent scheduling duplicate callbacks on every rebuild.
     if (scaleValue > maxScale && _lastClampedMaxScale != maxScale) {
       _lastClampedMaxScale = maxScale;
       WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -90,21 +82,24 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       });
     }
 
-    // Check for error first, because Riverpod's AsyncNotifier may report
-    // errors as AsyncLoading during retry (hasError=true, isLoading=true).
     if (cameraAsync.hasError) {
-      return ErrorScreen(message: l10n.cameraError(cameraAsync.error.toString()));
+      return _CameraErrorScreen(
+        message: l10n.cameraError(cameraAsync.error.toString()),
+        onRetry: () => ref.invalidate(appCameraControllerProvider),
+      );
     }
 
     return cameraAsync.when(
       loading: () => LoadingScreen(title: '${l10n.home}...'),
-      error: (err, _) => ErrorScreen(message: l10n.cameraError(err.toString())),
+      error: (err, _) => _CameraErrorScreen(
+        message: l10n.cameraError(err.toString()),
+        onRetry: () => ref.invalidate(appCameraControllerProvider),
+      ),
       data: (controller) {
         return sensorAsync.when(
           loading: () => LoadingScreen(title: l10n.waitingForSensorData),
           error: (err, _) => ErrorScreen(message: l10n.sensorError(err.toString())),
           data: (rotationAngle) {
-
             final safeAngle = rotationAngle.isFinite ? rotationAngle : 0.0;
 
             return Scaffold(
@@ -112,13 +107,12 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
               body: Stack(
                 alignment: Alignment.center,
                 children: [
-                  // Full-screen camera preview with aspect ratio correction.
+                  // Camera preview.
                   LayoutBuilder(
                     builder: (context, constraints) {
                       final mediaSize = MediaQuery.of(context).size;
                       final deviceRatio = mediaSize.width / mediaSize.height;
                       final cameraRatio = 1 / controller.value.aspectRatio;
-
                       final scale = deviceRatio > cameraRatio
                           ? deviceRatio / cameraRatio
                           : cameraRatio / deviceRatio;
@@ -136,7 +130,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                     },
                   ),
 
-                  // Dartboard SVG overlay that rotates dynamically in alignment with the physical world.
+                  // Dartboard SVG overlay.
                   Transform.scale(
                     scale: scaleValue,
                     child: AnimatedRotation(
@@ -155,10 +149,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                     ),
                   ),
 
-                  // iOS motion-sensor permission prompt (web only).
-                  // Displayed when the browser requires an explicit user gesture
-                  // before the accelerometer will deliver real values.
-                  if (!_sensorPermissionGranted)
+                  // Motion-sensor permission prompt (iOS Safari / WKWebView only).
+                  if (_sensorPermissionGranted == false)
                     Positioned(
                       top: 0,
                       left: 0,
@@ -172,11 +164,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                             child: Column(
                               mainAxisSize: MainAxisSize.min,
                               children: [
-                                const Icon(
-                                  Icons.sensors,
-                                  size: 48,
-                                  color: Colors.white70,
-                                ),
+                                const Icon(Icons.sensors, size: 48, color: Colors.white70),
                                 const SizedBox(height: 16),
                                 Text(
                                   l10n.sensorPermissionTitle,
@@ -199,7 +187,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                                 FilledButton.icon(
                                   onPressed: _sensorPermissionPending
                                       ? null
-                                      : () => _requestSensorPermission(),
+                                      : _handleSensorPermissionRequest,
                                   icon: _sensorPermissionPending
                                       ? const SizedBox(
                                           width: 18,
@@ -219,7 +207,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                       ),
                     ),
 
-                  // Zoom scale controls.
+                  // Zoom controls.
                   Positioned(
                     bottom: 24,
                     left: 0,
@@ -260,9 +248,11 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     );
   }
 
-  /// Requests device-motion permission on platforms that require it
-  /// (iOS Safari / WKWebView). Must be called from a user gesture.
-  Future<void> _requestSensorPermission() async {
+  // ---------------------------------------------------------------------------
+  // Actions
+  // ---------------------------------------------------------------------------
+
+  Future<void> _handleSensorPermissionRequest() async {
     setState(() => _sensorPermissionPending = true);
     try {
       final granted = await requestSensorPermission();
@@ -275,22 +265,23 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     } catch (_) {
       if (mounted) {
         setState(() {
-          _sensorPermissionGranted = true; // don't block the UI on error
+          _sensorPermissionGranted = true;
           _sensorPermissionPending = false;
         });
       }
     }
   }
 
-  /// Helper widget for the zoom scale adjustment buttons.
+  // ---------------------------------------------------------------------------
+  // Helpers
+  // ---------------------------------------------------------------------------
+
   Widget _buildZoomButton(BuildContext context, IconData icon, double delta, double maxScale) {
     final theme = Theme.of(context);
     return Material(
       color: Colors.transparent,
       child: InkWell(
-        onTap: () {
-          ref.read(dartboardScaleProvider.notifier).adjustZoom(delta, maxScale);
-        },
+        onTap: () => ref.read(dartboardScaleProvider.notifier).adjustZoom(delta, maxScale),
         customBorder: const CircleBorder(),
         child: Container(
           width: 44,
@@ -300,6 +291,54 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
             color: theme.colorScheme.secondaryContainer.withValues(alpha: 0.9),
           ),
           child: Icon(icon, color: theme.colorScheme.onSecondaryContainer),
+        ),
+      ),
+    );
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Camera error screen with retry button
+// ---------------------------------------------------------------------------
+
+/// Displayed when the camera fails to initialise (e.g. because the browser
+/// requires a user gesture before `getUserMedia()` is allowed on mobile).
+///
+/// The [onRetry] callback calls `ref.invalidate(appCameraControllerProvider)`
+/// which triggers a fresh camera initialisation — this time with a user gesture
+/// behind it.
+class _CameraErrorScreen extends StatelessWidget {
+  const _CameraErrorScreen({required this.message, required this.onRetry});
+
+  final String message;
+  final VoidCallback onRetry;
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    return Scaffold(
+      backgroundColor: Colors.black,
+      body: Center(
+        child: Padding(
+          padding: const EdgeInsets.all(32.0),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const Icon(Icons.cameraswitch, size: 48, color: Color(0xFFFF6B6B)),
+              const SizedBox(height: 16),
+              Text(
+                message,
+                textAlign: TextAlign.center,
+                style: const TextStyle(color: Color(0xFFFF6B6B), fontSize: 18),
+              ),
+              const SizedBox(height: 24),
+              FilledButton.icon(
+                onPressed: onRetry,
+                icon: const Icon(Icons.refresh),
+                label: Text(l10n.cameraRetry),
+              ),
+            ],
+          ),
         ),
       ),
     );
