@@ -1,4 +1,4 @@
-import 'package:dartboard_angle/l10n/app_localizations.dart';
+import 'package:dartboard_angle/l10n/generated/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:dartboard_angle/providers/app_settings_providers.dart';

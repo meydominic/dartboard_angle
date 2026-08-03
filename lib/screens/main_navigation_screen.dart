@@ -1,4 +1,4 @@
-import 'package:dartboard_angle/l10n/app_localizations.dart';
+import 'package:dartboard_angle/l10n/generated/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'home_screen.dart';
 import 'settings_screen.dart';
@@ -25,7 +25,7 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
   @override
   Widget build(BuildContext context) {
     // Retrieve localized strings for the UI elements.
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
 
     return Scaffold(
       // IndexedStack renders all screens but only displays the selected index,

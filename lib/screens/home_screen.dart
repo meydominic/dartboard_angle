@@ -5,7 +5,7 @@ import 'package:camera/camera.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:wakelock_plus/wakelock_plus.dart';
 
-import 'package:dartboard_angle/l10n/app_localizations.dart';
+import 'package:dartboard_angle/l10n/generated/app_localizations.dart';
 import 'package:dartboard_angle/providers/dartboard_provider.dart';
 import 'package:dartboard_angle/providers/camera_provider.dart';
 import 'package:dartboard_angle/providers/app_settings_providers.dart';
@@ -68,7 +68,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     final cameraAsync = ref.watch(appCameraControllerProvider);
     final sensorAsync = ref.watch(dartboardRotationProvider);
     final scaleValue = ref.watch(dartboardScaleProvider);
