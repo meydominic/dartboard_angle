@@ -69,7 +69,7 @@ class AppTheme extends _$AppTheme {
 
   /// Updates the application theme mode.
   void setTheme(ThemeMode mode) {
-    final prefs = ref.watch(sharedPreferencesProvider);
+    final prefs = ref.read(sharedPreferencesProvider);
     prefs.setInt(SharedPrefKeys.themeMode, mode.index);
     state = mode;
   }
@@ -92,7 +92,7 @@ class AppLocale extends _$AppLocale {
 
   /// Updates the application locale preference.
   void setLocale(Locale? locale) {
-    final prefs = ref.watch(sharedPreferencesProvider);
+    final prefs = ref.read(sharedPreferencesProvider);
     if (locale != null) {
       prefs.setString(SharedPrefKeys.appLocale, locale.languageCode);
     } else {
@@ -119,7 +119,7 @@ class DartboardColor extends _$DartboardColor {
 
   /// Updates the dartboard color preference.
   void setColor(Color color) {
-    final prefs = ref.watch(sharedPreferencesProvider);
+    final prefs = ref.read(sharedPreferencesProvider);
     prefs.setInt(SharedPrefKeys.dartboardColor, color.toARGB32());
     state = color;
   }
@@ -140,7 +140,7 @@ class DartboardThickLines extends _$DartboardThickLines {
 
   /// Updates the line thickness preference.
   void setThickLines(bool isThick) {
-    final prefs = ref.watch(sharedPreferencesProvider);
+    final prefs = ref.read(sharedPreferencesProvider);
     prefs.setBool(SharedPrefKeys.dartboardThickLines, isThick);
     state = isThick;
   }

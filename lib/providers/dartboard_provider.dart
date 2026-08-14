@@ -18,7 +18,7 @@ Stream<AccelerometerEvent> throttledSensor(Ref ref) async* {
   }
 }
 
-/// Calculates and exposes the rotational angle based on filtered accelerometer readings.
+/// Calculates and exposes the rotational angle based on raw accelerometer readings.
 /// Automatically disposes of itself when no longer listened to.
 @riverpod
 AsyncValue<double> dartboardRotation(Ref ref) {
@@ -41,7 +41,7 @@ class DartboardScale extends _$DartboardScale {
 
   /// Updates the zoom scale factor dynamically.
   void setScale(double newScale) {
-    final prefs = ref.watch(sharedPreferencesProvider);
+    final prefs = ref.read(sharedPreferencesProvider);
     prefs.setDouble(SharedPrefKeys.dartboardScale, newScale);
     state = newScale;
   }

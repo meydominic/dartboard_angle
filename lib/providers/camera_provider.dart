@@ -40,10 +40,12 @@ class AppCameraController extends _$AppCameraController {
     try {
       // Initialize the camera controller with maximum resolution preset.
       final controller = CameraController(camera, ResolutionPreset.max, enableAudio: false);
-      await controller.initialize();
 
-      // Ensure the controller is disposed of when the provider is disposed to release hardware resources.
+      // Ensure the controller is disposed of when the provider is disposed to
+      // release hardware resources — even if the initialization below throws.
       ref.onDispose(() => controller.dispose());
+
+      await controller.initialize();
 
       // Set up a lifecycle listener to pause the camera when the app goes into the background
       // and resume it when the app returns to the foreground, saving battery.
